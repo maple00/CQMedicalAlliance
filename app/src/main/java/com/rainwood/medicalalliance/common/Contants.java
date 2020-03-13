@@ -44,4 +44,10 @@ public final class Contants {
      * 登录者信息
      */
     public static LoginnerBean mLoginner;
+
+    /**
+     * 扫一扫
+     */
+    public static final int SCANCHECKCODE = 0x0001;
+
 }

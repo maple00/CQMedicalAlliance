@@ -1,2 +1,2 @@
-include ':app', ':tools'
+include ':app', ':tools', ':scantools'
 rootProject.name='CQMedicalAlliance'

@@ -3,6 +3,7 @@ package com.rainwood.medicalalliance.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
@@ -46,6 +47,7 @@ import com.rainwood.medicalalliance.upload.OnUploadListener;
 import com.rainwood.medicalalliance.upload.UploadParams;
 import com.rainwood.medicalalliance.upload.UploadResponse;
 import com.rainwood.medicalalliance.upload.Uploader;
+import com.rainwood.scantools.android.QRCodeCaptureActivity;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
@@ -89,6 +91,8 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
 
     // mHandler
     private final int INITIAL_SIZE = 0x101;
+    private final int SCAN_SIZE = 0x102;            // 扫一扫
+
     private ImageView mImg;
     private TextView mScanAdd;
 
@@ -161,13 +165,18 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
         if (Contants.hasMembers) {           // -- 是会员的情况
             switch (v.getId()) {
                 case R.id.iv_img:
-                    toast("头像上传");
+                    // toast("头像上传");
+                    imageSelector();
                     break;
                 case R.id.tv_scan_add:
-                    toast("扫码添加推荐人");
+                    // toast("扫码添加推荐人");
+                    Message msg = new Message();
+                    msg.what = SCAN_SIZE;
+                    mHandler.sendMessage(msg);
                     break;
                 case R.id.btn_buy_vip:
-                    toast("立即购买VIP");
+                    // toast("立即购买VIP");
+                    startActivity(VIPTypeActivity.class);
                     break;
                 case R.id.ll_buy_record:
                     // toast("购买记录");
@@ -183,19 +192,13 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                     toast("用户信息");
                     break;
                 case R.id.tv_scan_reference:
-                    toast("扫码添加推荐人");
-                    post(() -> {
-                        mReference.setVisibility(View.VISIBLE);
-                        mScanReference.setVisibility(View.GONE);
-                        mReference.setText(Html.fromHtml("<font color=" + getResources().getColor(R.color.green10) + " size='"
-                                + FontDisplayUtil.dip2px(Objects.requireNonNull(getContext()), 13f) + "'>推荐人：</font>"
-                                + "<font color=" + getResources().getColor(R.color.green10) + " size='"
-                                + FontDisplayUtil.dip2px(getContext(), 13f) + "'><b>"
-                                + "樱桃Mary" + "</b></font>"));
-                    });
+                    //toast("扫码添加推荐人");
+                    Message msg = new Message();
+                    msg.what = SCAN_SIZE;
+                    mHandler.sendMessage(msg);
                     break;
                 case R.id.btn_buy_vip:
-                    toast("购买VIP");
+                    //toast("购买VIP");
                     startActivity(VIPTypeActivity.class);
                     break;
                 case R.id.iv_head:
@@ -249,6 +252,39 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                     } else {
                         Log.i(TAG, "It`s a bug");
                     }
+                    break;
+                case SCAN_SIZE:
+                    // 先获取相机权限
+                    XXPermissions.with(getActivity())
+                            // 可设置被拒绝后继续申请，直到用户授权或永久拒绝
+                            .constantRequest()
+                            // 不指定权限则自定获取订单中的危险权限
+                            .permission(Permission.CAMERA)
+                            .request(new OnPermission() {
+                                @Override
+                                public void hasPermission(List<String> granted, boolean isAll) {
+                                    if (isAll) {
+                                        // 去扫码
+                                        Intent intent = new Intent(getContext(), QRCodeCaptureActivity.class);
+                                        // 设置标题栏的颜色
+                                        intent.putExtra(QRCodeCaptureActivity.STATUS_BAR_COLOR, Color.parseColor("#99000000"));
+                                        startActivityForResult(intent, Contants.SCANCHECKCODE);
+                                    } else {
+                                        toast("获取权限成功，部分权限未正常授予");
+                                    }
+                                }
+
+                                @Override
+                                public void noPermission(List<String> denied, boolean quick) {
+                                    if (quick) {
+                                        toast("被永久拒绝授权，请手动授予权限");
+                                        //如果是被永久拒绝就跳转到应用权限系统设置页面
+                                        XXPermissions.gotoPermissionSettings(getActivity());
+                                    } else {
+                                        toast("获取权限失败");
+                                    }
+                                }
+                            });
                     break;
             }
         }

@@ -52,7 +52,7 @@ dependencies {
 
     // 工具包
     implementation project(path: ':tools')
-
+    implementation project(path: ':scantools')
     //AndroidX支持
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
