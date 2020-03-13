@@ -1,0 +1,59 @@
+<resources>
+    <string name="app_name">重庆医疗联盟</string>
+
+    <string name="common_copyright">\u00a9 2019 All Rights Reserved</string>
+    <string name="common_code_send">发送验证码</string>
+    <string name="common_loading">加载中&#8230;</string>
+    <string name="common_login">登录</string>
+    <string name="common_reset_pwd">重置密码</string>
+    <string name="common_check_phone">手机号验证</string>
+    <string name="common_input_phone">请输入手机号</string>
+    <string name="common_input_account">请输入账号</string>
+    <string name="common_input_pwd">请输入密码</string>
+    <string name="common_input_new_pwd">请输入新密码</string>
+    <string name="common_input_new_pwd_again">请再次输入新密码</string>
+    <string name="common_login_forget">忘记密码？</string>
+    <string name="common_get_check_code">获取验证码</string>
+    <string name="common_input_code_verify">输入验证码</string>
+    <string name="common_confirm">确定</string>
+    <string name="common_cancel">取消</string>
+    <string name="common_text_change">修改</string>
+    <string name="common_text_logout">退出登录</string>
+    <string name="common_view_full">查看全部</string>
+    <string name="common_search">搜索</string>
+
+    <string name="common_permission_hint">请先授予权限</string>
+    <string name="common_permission_fail">授权失败，请手动授予权限</string>
+    <!-- Http-->
+    <string name="frame_name">AndroidOHP</string>
+
+    <!-- 提示-->
+    <string name="hint_layout_no_data">亲，暂无数据</string>
+    <string name="hint_layout_error_request">亲，请求出错了</string>
+    <string name="hint_layout_error_network">亲，没有网络了</string>
+
+    <!-- 本地异常捕捉-->
+    <string name="crash_error_hint">发生意外错误\n抱歉，给您带来不便</string>
+    <string name="crash_error_restart">重新启动</string>
+    <string name="crash_copy_log">复制日志</string>
+    <string name="crash_error_log">错误日志</string>
+    <string name="crash_error_info">错误信息</string>
+    <string name="crash_error_details">错误详情</string>
+    <string name="crash_close">关闭</string>
+
+    <!-- 地区对话框 -->
+    <string name="address_title">请选择地区</string>
+    <string name="address_hint">请选择</string>
+
+    <!--
+    App
+    -->
+    <string name="app_search_hint">搜索你想看的动态</string>
+    <string name="search_history">搜索历史</string>
+    <string name="search_clear">清空</string>
+    <string name="search_history_record">历史记录</string>
+    <string name="app_search_hospital">搜索医院名称</string>
+    <string name="dialog_give_up">放弃</string>
+    <string name="dialog_go_on">继续支付</string>
+
+</resources>

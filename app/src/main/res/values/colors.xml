@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App 样式中引用的颜色 -->
+    <color name="colorPrimary">@color/white</color>
+    <color name="colorPrimaryDark">@color/black</color>
+    <!-- 按钮默认的颜色-->
+    <color name="colorAccent">#25AFFF</color>
+    <color name="windowBackground">#F4F4F4</color>
+    <color name="textColorHint">#757575</color>
+    <!-- 字体百分比颜色-->
+    <color name="colorPercentage">#FF7263</color>
+    <!-- 文本字体颜色-->
+    <color name="textColor">#333333</color>
+    <!-- 字体颜色-->
+    <color name="colorWord">#666666</color>
+    <!-- 标签颜色-->
+    <color name="colorLabel">#999999</color>
+
+    <!-- 绘制颜色-->
+    <color name="colorCircle11">#11D7A0</color>
+    <!-- 点的颜色-->
+    <color name="colorPoint">#D6D6D6</color>
+    <!-- 计划管理 背景-->
+    <color name="colorPlanBG">#E6F1F8</color>
+
+    <!--颜色-->
+    <!-- 蓝色-->
+    <color name="colorBlue1">#24B0FF</color>
+    <!-- 橙色-->
+    <color name="colorOrange1">#FFD1A259</color>
+    <color name="colorOrange2">#FFFF7C62</color>
+
+    <!-- 灰色-->
+    <color name="colorGray1">#93A4AD</color>
+    <color name="colorGray2">#68757C</color>
+    <color name="colorGray3">#DADFE6</color>
+    <color name="colorGray4">#FFE5E5E5</color>
+    <color name="fontGray">#FF999999</color>
+    <color name="gray5">#FFEAEAEA</color>
+    <color name="gray10">#FF666666</color>
+    <color name="gray15">#FFCCCCCC</color>
+    <color name="gray25">#FFEEEEEE</color>
+    <color name="gray30">#FFF0F3F6</color>
+    <color name="gray35">#444041</color>
+    <color name="gray40">#F3F3F3</color>
+    <color name="gray45">#FF332E2C</color>
+    <color name="gray50">#FF444041</color>
+    <color name="gray55">#635951</color>
+    <color name="gray60">#FFF5F3F3</color>
+    <!-- 绿色-->
+    <color name="colorSuccess">#11D7A0</color>
+
+    <!-- 红色-->
+    <color name="colorFail">#FF726B</color>
+    <color name="colorRed1">#FFFF7263</color>
+    <color name="color5">#FFFF4343</color>
+    <!-- 透明色 -->
+    <!-- 白色 -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="white5">#FFF6F6F6</color>
+    <color name="white90">#E6FFFFFF</color>
+
+    <!-- 按钮按压时的颜色 -->
+    <color name="colorButtonPressed">#1976D2</color>
+    <!-- 按钮禁用时的颜色 -->
+    <color name="colorButtonDisable">#BBBBBB</color>
+    <!-- 分割线的颜色 -->
+    <color name="colorLine">#ECECEC</color>
+
+    <!-- 对话框确认按钮文本颜色 -->
+    <color name="colorConfirm">#007AFF</color>
+    <!-- 对话框取消按钮文本颜色 -->
+    <color name="colorCancel">#F44336</color>
+
+    <!-- 黑色 -->
+    <color name="black">#FF000000</color>
+    <color name="black94">#FF222222</color>
+    <color name="black15">#26000000</color>
+    <color name="black20">#FF2D3043</color>
+    <color name="black25">#FF332C31</color>
+    <color name="black30">#342F2D</color>
+    <color name="black35">#FF1B1B1B</color>
+    <!-- 绿色-->
+    <color name="green5">#FF27C422</color>
+    <color name="green10">#FF419144</color>
+
+    <!-- 橙色-->
+    <color name="orange5">#FFFFF4EF</color>
+    <color name="orange10">#FFFF915B</color>
+    <color name="orange15">#FFF5D2AA</color>
+    <color name="orange20">#F5D1A9</color>
+    <color name="orange25">#F5D2AA</color>
+    <color name="orange30">#E1B98B</color>
+    <color name="orange35">#FFF5E9</color>
+    <color name="orange40">#FFF9E7</color>
+    <color name="orange45">#8D5E28</color>
+    <color name="orange50">#FFD7AB6F</color>
+    <color name="orange55">#FFFFF6EC</color>
+    <color name="orange60">#FF363230</color>
+    <color name="orange65">#FFFFEAD2</color>
+    <color name="orange70">#FFF3CEA2</color>
+    <!-- 蓝色-->
+    <color name="blue5">#FFF1F3FF</color>
+    <color name="blue10">#FF6375FA</color>
+
+</resources>

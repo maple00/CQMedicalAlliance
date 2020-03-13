@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="60dp"
+        android:text="注册"
+        android:textColor="@color/colorWord"
+        android:textSize="30sp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="70dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+86"
+            android:textColor="@color/textColor"
+            android:textSize="15sp" />
+
+        <com.rainwood.tools.view.ClearEditText
+            android:id="@+id/cet_mobile_num"
+            style="@style/EditTextStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:hint="@string/common_input_phone"
+            android:maxLength="20"
+            android:maxLines="1"
+            android:inputType="phone"
+            app:regexType="mobile" />
+
+    </LinearLayout>
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/tv_login_forget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:layout_marginTop="15dp"
+        android:text="@string/common_login_forget"
+        android:textColor="@color/colorAccent"
+        android:visibility="gone"
+        tools:ignore="RtlHardcoded" />
+
+    <Button
+        android:id="@+id/btn_get_code"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/selector_button_3"
+        android:paddingLeft="15dp"
+        android:paddingTop="8dp"
+        android:paddingRight="15dp"
+        android:paddingBottom="8dp"
+        android:text="@string/common_get_check_code"
+        android:textColor="@color/white90"
+        android:textSize="15sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="已有账号 "
+            android:textColor="@color/textColor"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/tv_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:autoLink="all"
+            android:text="立即登录"
+            android:textColor="@color/green10"
+            android:textSize="13sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="85dp"
+        android:gravity="center_vertical">
+
+        <View
+            android:layout_width="45dp"
+            android:layout_height="1dp"
+            android:background="@color/gray5" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="其他登录方式"
+            android:textColor="@color/fontGray"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="45dp"
+            android:layout_height="1dp"
+            android:background="@color/gray5" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp">
+
+        <ImageView
+            android:id="@+id/iv_wx_login"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_wechat" />
+
+        <Space
+            android:layout_width="60dp"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/iv_qq_login"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_qq" />
+
+    </LinearLayout>
+
+</LinearLayout>

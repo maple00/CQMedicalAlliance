@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="请选择会员卡分类"
+        android:textColor="@color/gray10"
+        android:textSize="24sp" />
+
+
+    <ImageView
+        android:id="@+id/iv_personal_vip"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="90dp"
+        android:src="@drawable/ic_personal" />
+
+    <TextView
+        android:id="@+id/tv_personal_vip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="个人会员"
+        android:textColor="@color/textColor"
+        android:textSize="16sp" />
+
+
+    <ImageView
+        android:id="@+id/iv_family_vip"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_family" />
+
+    <TextView
+        android:id="@+id/tv_family"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:text="家庭会员"
+        android:textColor="@color/textColor"
+        android:textSize="16sp" />
+
+</LinearLayout>

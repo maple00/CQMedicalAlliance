@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="@drawable/img_is_vip_bg"
+        android:paddingStart="15dp"
+        android:paddingTop="40dp"
+        android:paddingEnd="15dp">
+
+        <FrameLayout
+            android:id="@+id/fl_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/img_crown"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp">
+
+            <ImageView
+                android:id="@+id/iv_img"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_margin="3dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icon_loading_fail" />
+
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="15dp"
+            android:layout_toEndOf="@+id/fl_img"
+            android:text="西瓜今天也很皮"
+            android:textColor="@color/orange20"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/iv_arrow"
+            android:layout_width="7dp"
+            android:layout_height="13dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="22dp"
+            android:src="@drawable/ic_arrow_right" />
+
+
+        <TextView
+            android:id="@+id/tv_scan_add"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/fl_img"
+            android:paddingStart="9dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="9dp"
+            android:paddingBottom="8dp"
+            android:text="扫码添加推荐人"
+            android:textColor="@color/orange15"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:ignore="SmallSp" />
+
+        <LinearLayout
+            android:id="@+id/ll_referees"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="10dp"
+            android:layout_toEndOf="@+id/fl_img"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="17dp"
+                android:layout_height="17dp"
+                android:layout_marginStart="3dp"
+                android:src="@drawable/ic_give_like" />
+
+            <TextView
+                android:id="@+id/tv_referees"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:textColor="@color/orange15"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_buy_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_name"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="60dp"
+            android:layout_toEndOf="@+id/fl_img"
+            android:background="@drawable/shap_orange_15"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp">
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:src="@drawable/ic_note" />
+
+            <TextView
+                android:id="@+id/tv_buy_record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="购买记录"
+                android:textColor="@color/gray35"
+                android:textSize="13sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:paddingBottom="10dp">
+
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_vip_equity" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:text="VIP会员特权"
+                        android:textColor="@color/black20"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+
+                <!-- <TextView
+                     android:id="@+id/tv_content"
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:layout_marginStart="15dp"
+                     android:layout_marginTop="20dp"
+                     android:layout_marginEnd="15dp"
+                     android:text="1.凡在连锁店内一次性消费实付金额满5000元即可申请办理普卡一张；\n
+ 2.凡在连锁店内一次性消费实付金额满20000元或累计消费金额满50000元者即可申请办理银卡一张；\n
+ 3.凡在连锁店内一次性消费实付金额满50000元或累计消费金额满100000元者即可申请办理金卡一张；"
+                     android:textColor="@color/black20"
+                     android:textSize="14sp" />-->
+
+                <WebView
+                    android:id="@+id/wv_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp" />
+
+            </LinearLayout>
+
+        </androidx.core.widget.NestedScrollView>
+
+        <Button
+            android:id="@+id/btn_buy_vip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="15dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/shap_radio_black_23"
+            android:text="立即购买VIP"
+            android:textColor="@color/orange15"
+            android:textSize="17sp" />
+
+    </RelativeLayout>
+
+</LinearLayout>

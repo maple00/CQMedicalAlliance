@@ -1,0 +1,95 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+    defaultConfig {
+        applicationId "com.rainwood.medicalalliance"
+        minSdkVersion 19
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+        }
+    }
+
+    // 高德地图
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+        }
+    }
+
+    // 配置jdk1.8
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+
+    // 生成指定的apk文件名，默认为app-release.spk
+    android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                // 此处指定生成的apk文件名
+                outputFileName = "重庆医疗联盟.apk"
+            }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+
+    // 工具包
+    implementation project(path: ':tools')
+
+    //AndroidX支持
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    // google material  支持
+    implementation 'com.google.android.material:material:1.1.0'
+
+    // 本地异常捕捉框架：https://github.com/Ereza/CustomActivityOnCrash
+    implementation 'cat.ereza:customactivityoncrash:2.2.0'
+
+    // 图片加载框架：https://github.com/bumptech/glide
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
+
+    // xBanner 支持
+    implementation 'jp.wasabeef:glide-transformations:3.0.1'
+    implementation 'com.xhb:xbanner:1.2.2'
+    implementation 'com.nineoldandroids:library:2.4.0'
+
+    // okHttp 支持
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+
+    // Jsoup 支持 Java对HTML代码解析的支持
+    implementation 'org.jsoup:jsoup:1.11.3'
+
+    // 支持放大缩放的 ImageView：https://github.com/chrisbanes/PhotoView
+    // implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+    // 高德地图 至此
+    //3D地图so及jar
+    implementation 'com.amap.api:3dmap:7.2.0'
+    //定位功能
+    implementation 'com.amap.api:location:4.8.0'
+    //搜索功能
+    implementation 'com.amap.api:search:7.1.0'
+
+    // 支付宝支付 支持
+    // implementation (name: 'alipaySdk-15.5.7-20181023110917', ext: 'aar')
+
+    // 微信、QQ支持
+}

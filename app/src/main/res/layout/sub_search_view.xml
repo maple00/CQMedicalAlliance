@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="37dp"
+    android:layout_marginLeft="15dp"
+    android:layout_marginTop="10dp"
+    android:layout_marginRight="15dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:textColor="@color/gray"
+    android:textSize="14sp">
+
+    <ImageView
+        android:id="@+id/iv_back"
+        android:layout_width="18dp"
+        android:layout_height="22dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_page_back" />
+
+    <!-- 带删除的输入框-->
+    <LinearLayout
+        android:id="@+id/ll_search"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_toStartOf="@+id/tv_search"
+        android:layout_toEndOf="@+id/iv_back"
+        android:background="@drawable/shape_search_bar">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:src="@drawable/ic_title_search" />
+
+        <com.rainwood.tools.view.ClearEditText
+            android:id="@+id/et_search"
+            style="@style/SearchViewStyle"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginStart="5dp"
+            android:hint="@string/app_search_hint"
+            tools:ignore="TextFields" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_search"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:hint="@string/common_search"
+        android:textColor="@color/textColor"
+        android:textSize="20sp" />
+
+</RelativeLayout>

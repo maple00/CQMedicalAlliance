@@ -1,0 +1,2 @@
+include ':app', ':tools'
+rootProject.name='CQMedicalAlliance'

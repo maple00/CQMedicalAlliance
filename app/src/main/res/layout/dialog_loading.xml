@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/loading_bg"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16.0dip">
+
+
+    <com.rainwood.tools.widget.ProgressView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        app:barColor="@android:color/white"
+        app:barWidth="2dp"
+        app:fillRadius="false"
+        app:linearProgress="true"
+        app:progressIndeterminate="true" />
+
+    <com.rainwood.tools.view.SmartTextView
+        android:id="@+id/tv_wait_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="16dp"
+        android:maxLines="3"
+        android:text="@string/common_loading"
+        android:textColor="@color/white"
+        android:textSize="14sp" />
+
+</LinearLayout>
