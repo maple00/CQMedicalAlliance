@@ -42,6 +42,8 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
     private ImageView mPageBack;
     @ViewById(R.id.tv_title)
     private TextView mPageTitle;
+    @ViewById(R.id.tv_checked_type)
+    private TextView choiceType;
     @ViewById(R.id.cet_name)
     private ClearEditText name;         // 输入姓名
     @ViewById(R.id.iv_man)
@@ -102,10 +104,12 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
         // 个人会员
         if (Contants.CLICK_POSITION_SIZE == 0x1005) {
             familyLl.setVisibility(View.GONE);
+            choiceType.setText("已选个人会员");
         }
         // 家庭会员
         if (Contants.CLICK_POSITION_SIZE == 0x1006) {
             familyLl.setVisibility(View.VISIBLE);
+            choiceType.setText("已选家庭会员");
             Message msg = new Message();
             msg.what = FAMILY_SIZE;
             mHandler.sendMessage(msg);
