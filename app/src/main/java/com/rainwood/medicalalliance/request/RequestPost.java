@@ -117,7 +117,7 @@ public final class RequestPost {
         RequestParams params = new RequestParams();
         params.add("khMxId", customId);
         params.add("id", id);
-        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=getVipCard", params, listener);
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=cardMX", params, listener);
     }
 
     /**
@@ -199,8 +199,8 @@ public final class RequestPost {
     /**
      * 新增会员信息 --- 家庭
      */
-    public static void addVIPInfos(String type, String name, String sex, String idCard, File idCardFront,
-                                   File idCardBack, String pwd, String isRead, String tel,
+    public static void addVIPInfos(String type, String name, String sex, String idCard, String idCardFront,
+                                   String idCardBack, String pwd, String isRead, String tel,
                                    String residence, List<String> subResideceLists, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("type", type);                       // 购买的VIP的类型
@@ -217,6 +217,24 @@ public final class RequestPost {
             params.add("bookletZi[]", resideceList);           // 户口本子页
         }
         OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=homeMessage", params, listener);
+    }
+
+    /**
+     * 新增会员信息 --- 个人
+     */
+    public static void getPersonalVIP(String type, String name, String sex, String idCard, String idCardFront, String idCardBack,
+                                      String pwd, String isRead, String tel, OnHttpListener listener ){
+        RequestParams params = new RequestParams();
+        params.add("type", type);                       // 购买的VIP的类型
+        params.add("name", name);                       // 姓名
+        params.add("sex", sex);                         // 性别
+        params.add("idCard", idCard);                    // 身份证号
+        params.add("idCardFrontSrc", idCardFront);      // 身份证正面
+        params.add("idCardBackSrc", idCardBack);        // 身份证背面
+        params.add("cardPassword", pwd);                // 会员卡密码
+        params.add("read", isRead);                     // 是否阅读了免责条款
+        params.add("tel", tel);                         // 电话号码
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=personalMessage", params, listener);
     }
 
     /**

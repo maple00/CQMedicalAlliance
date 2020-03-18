@@ -9,13 +9,23 @@ public class ImageBean {
 
     private String path;            // 图片地址
     private boolean hasAdd;      // 是否是添加图片标识
+    private String src;         // 后台地址
 
     @Override
     public String toString() {
         return "ImageBean{" +
                 "path='" + path + '\'' +
                 ", hasAdd=" + hasAdd +
+                ", src='" + src + '\'' +
                 '}';
+    }
+
+    public String getSrc() {
+        return src;
+    }
+
+    public void setSrc(String src) {
+        this.src = src;
     }
 
     public boolean isHasAdd() {

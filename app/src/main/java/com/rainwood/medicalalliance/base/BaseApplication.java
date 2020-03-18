@@ -5,6 +5,8 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.multidex.MultiDex;
+
 import com.alibaba.security.rp.RPSDK;
 import com.rainwood.medicalalliance.common.ActivityStackManager;
 import com.rainwood.medicalalliance.ui.activity.CrashActivity;
@@ -32,7 +34,7 @@ public class BaseApplication extends Application {
     public void onCreate() {
         super.onCreate();
         app = this;
-        appContext = getInstance().getApplicationContext();
+        appContext = this.getApplicationContext();
         // initActivity 初始化Activity 栈管理
         initActivity();
         // 初始化三方的框架
@@ -74,6 +76,7 @@ public class BaseApplication extends Application {
      * 初始化工具类
      */
     private void initTools() {
+         MultiDex.install(this);
         // 设置 Toast 拦截器
         ToastUtils.setToastInterceptor(new ToastInterceptor() {
             @Override
@@ -115,7 +118,7 @@ public class BaseApplication extends Application {
     /**
      * debug模式
      */
-    public boolean isDebug(){
+    public boolean isDebug() {
         return true;
     }
 }

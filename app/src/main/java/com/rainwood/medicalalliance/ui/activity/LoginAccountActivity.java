@@ -7,6 +7,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.android.pay.wechat.OnWeChatLoginListener;
+import com.android.pay.wechat.WeChatConstants;
+import com.android.pay.wechat.WeChatLogin;
+import com.android.pay.wechat.WeChatUser;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseActivity;
 import com.rainwood.medicalalliance.common.Contants;
@@ -88,7 +92,28 @@ public final class LoginAccountActivity extends BaseActivity implements View.OnC
                 break;
             case R.id.iv_wx_login:
                 toast("微信登录");
-                openActivity(HomeActivity.class);
+                //openActivity(HomeActivity.class);
+                WeChatLogin.Builder builder = new WeChatLogin.Builder(this);
+                builder.appId("xxx");
+                builder.appSecret("xxx");
+                builder.listener(new OnWeChatLoginListener() {
+                    @Override
+                    public void onWeChatLogin(int code, String msg, WeChatUser user) {
+                        if (code == WeChatConstants.LOADING) {//登录中
+
+                        }
+                        if (code == WeChatConstants.SUCCEED) {//登录成功
+
+                        }
+                        if (code == WeChatConstants.CANCEL) {//用户取消登录
+
+                        }
+                        if (code == WeChatConstants.AUTH_DENIED) {//授权取消
+
+                        }
+                    }
+                });
+                builder.build();
                 break;
             case R.id.iv_qq_login:
                 toast("QQ登录");

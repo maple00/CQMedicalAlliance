@@ -56,7 +56,9 @@ public final class SubItemCardInfosAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.tv_title.setText(getItem(position).getTitle());
-        holder.tv_content.setText(getItem(position).getContent());
+        // 以空格隔开 -- 作用是为了截断时间
+        String[] subContent = getItem(position).getContent().split(" ");
+        holder.tv_content.setText(subContent[0]);
         return convertView;
     }
 

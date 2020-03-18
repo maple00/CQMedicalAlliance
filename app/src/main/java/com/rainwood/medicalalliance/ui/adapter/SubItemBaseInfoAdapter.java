@@ -62,21 +62,21 @@ public final class SubItemBaseInfoAdapter extends BaseAdapter {
         int type = getItemViewType(position);
         if (convertView == null) {
             switch (type) {
-                case 0:
+                case 0:                 // title + label
                     holder = new ViewHolder();
                     convertView = LayoutInflater.from(mContext).inflate(R.layout.sub_item_card_info, parent, false);
                     holder.tv_title = convertView.findViewById(R.id.tv_title);
                     holder.tv_content = convertView.findViewById(R.id.tv_content);
                     convertView.setTag(holder);
                     break;
-                case 1:
+                case 1:             // 身份证
                     imageHolderOne = new ImageHolderOne();
                     convertView = LayoutInflater.from(mContext).inflate(R.layout.sub_image, parent, false);
                     imageHolderOne.mgv_image_list = convertView.findViewById(R.id.mgv_image_list);
                     imageHolderOne.tv_title = convertView.findViewById(R.id.tv_title);
                     convertView.setTag(imageHolderOne);
                     break;
-                case 2:
+                case 2:             // 户口本
                     imageHolderTwo = new ImageHolderTwo();
                     convertView = LayoutInflater.from(mContext).inflate(R.layout.sub_image_book, parent, false);
                     imageHolderTwo.mgv_image_list = convertView.findViewById(R.id.mgv_image_list);

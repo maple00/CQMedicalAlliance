@@ -1,6 +1,7 @@
 package com.rainwood.medicalalliance.ui.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.domain.ImageBean;
 
+import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,7 +33,6 @@ public final class UploadImgAdapter extends BaseAdapter {
     public UploadImgAdapter(Context context, List<ImageBean> list) {
         mContext = context;
         mList = list;
-        Log.d("sxs", " --- " + mList.toString());
     }
 
     @Override
@@ -65,13 +66,14 @@ public final class UploadImgAdapter extends BaseAdapter {
 
         if (getItem(position).isHasAdd()){
             holder.iv_delete.setVisibility(View.GONE);
-            Glide.with(Objects.requireNonNull(mContext)).load(R.drawable.img_add)
+            Glide.with(mContext).load(R.drawable.img_add)
                     //.apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
                     .into(holder.iv_image);
         }else {
             holder.iv_delete.setVisibility(View.VISIBLE);
-            Glide.with(Objects.requireNonNull(mContext)).load(getItem(position).getPath())
-                    //.apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+            Log.d("sxs", " -- path --- " + new File(getItem(position).getPath()));
+            Log.d("sxs", " -- path --- " + Uri.fromFile(new File(getItem(position).getPath())));
+            Glide.with(mContext).load(getItem(position).getPath())
                     .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
                     .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
                     .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片

@@ -1,9 +1,14 @@
 package com.rainwood.medicalalliance.ui.activity;
 
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.android.pay.wechat.OnWeChatLoginListener;
+import com.android.pay.wechat.WeChatConstants;
+import com.android.pay.wechat.WeChatLogin;
+import com.android.pay.wechat.WeChatUser;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseActivity;
 import com.rainwood.tools.viewinject.ViewById;
@@ -38,7 +43,28 @@ public final class LoginMainActivity extends BaseActivity implements View.OnClic
         switch (v.getId()) {
             case R.id.btn_wx_login:
                 toast("微信登录");
-                openActivity(HomeActivity.class);
+                WeChatLogin.Builder builder = new WeChatLogin.Builder(this);
+                builder.appId("xxx");
+                builder.appSecret("xxx");
+                builder.listener(new OnWeChatLoginListener() {
+                    @Override
+                    public void onWeChatLogin(int code, String msg, WeChatUser user) {
+                        Log.d(TAG, "微信登录：code --" + code + " --- msg ---" + msg + " --- user ---" + user);
+                        if (code == WeChatConstants.LOADING) {//登录中
+
+                        }
+                        if (code == WeChatConstants.SUCCEED) {//登录成功
+
+                        }
+                        if (code == WeChatConstants.CANCEL) {//用户取消登录
+
+                        }
+                        if (code == WeChatConstants.AUTH_DENIED) {//授权取消
+
+                        }
+                    }
+                });
+                builder.build();
                 break;
             case R.id.btn_account_login:
                 //toast("账号登录");

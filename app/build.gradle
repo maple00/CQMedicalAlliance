@@ -10,16 +10,15 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // 开启 Dex 分包
+        multiDexEnabled true
+
         ndk {
+            // armeabi：已经淘汰（0%）
+            // armeabi-v7a：曾经主流的架构平台（20%）
+            // arm64-v8a：目前主流架构平台（80%）
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
             abiFilters "armeabi-v7a", "arm64-v8a"
-        }
-    }
-
-    // 高德地图
-    sourceSets {
-        main {
-            jniLibs.srcDirs = ['libs']
         }
     }
 
@@ -46,19 +45,24 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(include: ['*.jar'], dir: '../libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     // 工具包
     implementation project(path: ':tools')
+
     // 扫一扫
     implementation project(path: ':scantools')
+
     //AndroidX支持
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
     // google material  支持
     implementation 'com.google.android.material:material:1.1.0'
+
+    // Dex支持
+    implementation 'com.android.support:multidex:1.0.3'
 
     // 本地异常捕捉框架：https://github.com/Ereza/CustomActivityOnCrash
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
@@ -73,14 +77,13 @@ dependencies {
     implementation 'com.nineoldandroids:library:2.4.0'
 
     // okHttp 支持
-    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
+   // implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 
     // Jsoup 支持 Java对HTML代码解析的支持
     implementation 'org.jsoup:jsoup:1.11.3'
 
     // 支持放大缩放的 ImageView：https://github.com/chrisbanes/PhotoView
     // implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-
     // 高德地图 至此
     //3D地图so及jar
     implementation 'com.amap.api:3dmap:7.2.0'
@@ -89,9 +92,18 @@ dependencies {
     //搜索功能
     implementation 'com.amap.api:search:7.1.0'
 
-    // alibaba (活体实体、支付宝支付)支持
-    implementation (name:'rpsdk-3.3.0.1', ext:'aar')
-
+    // alibaba (活体实体)支持
+    implementation(name: 'rpsdk-3.3.0.1', ext: 'aar')
+    implementation(name: 'oss-android-sdk-2.9.2', ext: 'aar')
+    implementation(name: 'SecurityGuardSDK-external-release-5.4.187-preInstall', ext: 'aar')
+    implementation(name: 'SecurityBodySDK-external-release-5.4.109-preInstall', ext: 'aar')
+    implementation files('libs/windvane-min-8.0.3.2.3.jar')
+    implementation files('libs/logging-interceptor-3.12.0.jar')
+    implementation files('libs/okhttp-3.12.0.jar')
+    implementation files('libs/okio-1.16.0.jar')
 
     // 微信、QQ支持
+    // 支付支持
+    implementation 'com.github.RelinRan:AndroidPay:1.0.7'
+
 }

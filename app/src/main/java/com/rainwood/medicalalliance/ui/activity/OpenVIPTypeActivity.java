@@ -18,6 +18,11 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.android.pay.alipay.AliPay;
+import com.android.pay.alipay.OnAliPayListener;
+import com.android.pay.wechat.OnWeChatPayListener;
+import com.android.pay.wechat.WeChatConstants;
+import com.android.pay.wechat.WeChatPay;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseActivity;
 import com.rainwood.medicalalliance.base.BaseDialog;
@@ -68,7 +73,7 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
         buyNow.setOnClickListener(this);
 
         String customId = getIntent().getStringExtra("customId");
-        if (customId != null){              // 从续费界面过来的
+        if (customId != null) {              // 从续费界面过来的
             Log.d(TAG, " 续费客户id： " + customId);
         }
     }
@@ -80,6 +85,7 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
         RequestPost.BuyCardType(this);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -91,6 +97,7 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
                 for (int i = 0; i < mList.size(); i++) {
                     if (mList.get(i).isSelector()) {
                         count = i;
+                        break;
                     }
                 }
                 if (count < 0) {
@@ -110,6 +117,11 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
                 mPopwindow.showAtLocation(rootView, Gravity.BOTTOM, 0, 0);
                 mPopwindow.setOutsideTouchable(false);
                 popOutShadow(mPopwindow);
+                // 卡信息
+                TextView purpose = view.findViewById(R.id.tv_purpose);
+                purpose.setText(mList.get(count).getGrade() + "，原价￥" + mList.get(count).getOldPrice());
+                TextView payMoney = view.findViewById(R.id.tv_pay_money);
+                payMoney.setText("￥" + mList.get(count).getPrice());
                 ImageView close = view.findViewById(R.id.iv_close);
                 close.setOnClickListener(v1 -> new MessageDialog.Builder(OpenVIPTypeActivity.this)
                         .setTitle(null)
@@ -169,14 +181,98 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
                         toast("未同意条款不能支付");
                         return;
                     }
-                    // TODO: 去支付
-                    openActivity(SuccessActivity.class);
+                    // TODO: 去支付-- 支付方式
+                    // openActivity(SuccessActivity.class);
+                    if ("0".equals(payMethod.getMethod())) {             // 微信支付
+                        wxPay();
+                    }
+                    if ("1".equals(payMethod.getMethod())) {             // 支付宝支付
+                        aliPay();
+                    }
                 });
 
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + v.getId());
         }
+    }
+
+    /**
+     * 支付宝支付
+     */
+    private void aliPay() {
+        AliPay.Builder builder = new AliPay.Builder(this);
+        // app支付请求参数字符串，主要包含商户的订单信息，key=value形式，以&连接。
+        builder.orderInfo("2021001144648331");
+        builder.listener(new OnAliPayListener() {
+            /**
+             * 参数解释
+             * @param status 是结果码(类型为字符串)。
+             *       9000	订单支付成功
+             *       8000	正在处理中，支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+             *       4000	订单支付失败
+             *       5000	重复请求
+             *       6001	用户中途取消
+             *       6002	网络连接出错
+             *       6004	支付结果未知（有可能已经支付成功），请查询商户订单列表中订单的支付状态
+             *       其它	其它支付错误
+             * @param json        是处理结果(类型为json结构字符串)
+             *       out_trade_no	String	是	64	商户网站唯一订单号	70501111111S001111119
+             *       trade_no	String	是	64	该交易在支付宝系统中的交易流水号。最长64位。	2014112400001000340011111118
+             *       app_id	String	是	32	支付宝分配给开发者的应用Id。	2014072300007148
+             *       total_amount	Price	是	9	该笔订单的资金总额，单位为RMB-Yuan。取值范围为[0.01,100000000.00]，精确到小数点后两位。	9.00
+             *       seller_id	String	是	16	收款支付宝账号对应的支付宝唯一用户号。以2088开头的纯16位数字	2088111111116894
+             *       msg	String	是	16	处理结果的描述，信息来自于code返回结果的描述	success
+             *       charset	String	是	16	编码格式	utf-8
+             *       timestamp	String	是	32	时间	2016-10-11 17:43:36
+             *       code	String	是	16	结果码	具体见
+             * @param description description是描述信息(类型为字符串)
+             */
+            @Override
+            public void onAliPay(String status, String json, String description) {
+                Log.d(TAG, " -- status: " + status + " -- json:" + json + " --- description:" + description);
+                if (status.equals("9000")) {//成功
+
+                } else if (status.equals("6001")) {//用户取消
+
+                } else {//支付失败
+
+                }
+            }
+        });
+        builder.loading(true);
+        builder.build();
+    }
+
+    /**
+     * 微信支付
+     */
+    private void wxPay() {
+        WeChatPay.Builder builder = new WeChatPay.Builder(this);
+        builder.appId("xxxx");
+        builder.partnerId("xxx");
+        builder.prepayId("xxx");
+        builder.nonceStr("xxxx");
+        builder.timeStamp("xxxx");
+        builder.packageValue("Sign=WXPay");
+        builder.sign("xxxx");
+        builder.listener(new OnWeChatPayListener() {
+            @Override
+            public void onWeChatPay(int code, String msg) {
+                Log.d(TAG, " --- code -- " + code + " ---- msg ----" + msg);
+                if (code == WeChatConstants.SUCCEED) {//支付成功
+
+                }
+                if (code == WeChatConstants.CANCEL) {//用户取消
+
+                }
+                if (code == WeChatConstants.FAILED) {//支付失败
+
+                }
+            }
+        });
+        builder.extData("用于购买XXXX");//支付提示文字
+        builder.build();
     }
 
     @SuppressLint("HandlerLeak")

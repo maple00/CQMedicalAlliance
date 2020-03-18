@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ import com.rainwood.medicalalliance.okhttp.JsonParser;
 import com.rainwood.medicalalliance.okhttp.OnHttpListener;
 import com.rainwood.medicalalliance.request.RequestPost;
 import com.rainwood.medicalalliance.ui.adapter.CardDetailAdapter;
+import com.rainwood.medicalalliance.utils.DialogUtils;
+import com.rainwood.medicalalliance.utils.ListUtils;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureListView;
 
@@ -64,6 +67,8 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
     // 基本资料
     private String[] baseTitels = {"会员卡分类", "姓名", "性别", "手机号", "身份证号", "身份证照片", "户口本照片"};
 
+    private DialogUtils mDialog;
+
     @Override
     protected void initView() {
         mPageBack.setOnClickListener(this);
@@ -72,20 +77,14 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
         mPageRightTitle.setTextColor(getResources().getColor(R.color.green10));
         mPageRightTitle.setOnClickListener(this);
 
-        Message msg = new Message();
-        msg.what = INITIAL_SIZE;
-        mHandler.sendMessage(msg);
     }
 
     @Override
     protected void initData() {
         super.initData();
-        mRecord = (SubRecordBean) getIntent().getSerializableExtra("record");
-        if (mRecord != null) {           // 通过会员卡id和客户id查询会员卡详情
-            // Log.d(TAG, " -- record:" + record.toString());
-            RequestPost.VIPCardDetail(mRecord.getKhMxId(), mRecord.getId(), this);
-        }
-
+        mDialog = new DialogUtils(this, "加载中");
+        mDialog.showDialog();
+        // initial UI
         mList = new ArrayList<>();
         for (int i = 0; i < titles.length; i++) {
             VIPCardBean card = new VIPCardBean();
@@ -99,7 +98,7 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
             for (int j = 0; j < infosTitles.length; j++) {
                 UsuallyBean usually = new UsuallyBean();
                 usually.setTitle(infosTitles[j]);
-                usually.setContent("哈哈");
+               // usually.setContent("哈哈");
                 infoList.add(usually);
             }
             card.setInfosList(infoList);
@@ -132,12 +131,18 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
                     }
 
                 } else {
-                    baseInfo.setLabel("哈哈哈");
+                   // baseInfo.setLabel("哈哈哈");
                 }
                 baseList.add(baseInfo);
             }
             card.setInfo(baseList);
             mList.add(card);
+        }
+
+        mRecord = (SubRecordBean) getIntent().getSerializableExtra("record");
+        if (mRecord != null) {           // 通过会员卡id和客户id查询会员卡详情
+            // Log.d(TAG, " -- record:" + mRecord.toString());
+            RequestPost.VIPCardDetail(mRecord.getKhMxId(), mRecord.getId(), this);
         }
     }
 
@@ -179,8 +184,77 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
-                if (result.url().contains("library/mData.php?type=getVipCard")) {               // 会员卡详情
-
+                if (result.url().contains("library/mData.php?type=cardMX")) {               // 会员卡详情
+                     Log.d(TAG, "详情：" + body.get("data"));
+                    // 总信息
+                    Map<String, String> map = JsonParser.parseJSONObject(body.get("data"));
+                    // 卡信息
+                    Map<String, String> cardMX = JsonParser.parseJSONObject(map.get("cardMX"));
+                    for (int i = 0; i < ListUtils.getSize(mList.get(0).getInfosList()); i++) {
+                        switch (i){
+                            case 0:     // 会员等级
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("grade"));
+                                break;
+                            case 1:     // 卡号
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("cardNum"));
+                                break;
+                            case 2:     // 卡片类型
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("type"));
+                                break;
+                            case 3:     // 销售价
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("price"));
+                                break;
+                            case 4:         // 原价
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("oldPrice"));
+                                break;
+                            case 5:         // 累计消费 -- sumPrice
+                                mList.get(0).getInfosList().get(i).setContent(map.get("sumPrice"));
+                                break;
+                            case 6:         // 续费时间
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("payTime"));
+                                break;
+                            case 7:         // 到期时间
+                                mList.get(0).getInfosList().get(i).setContent(cardMX.get("overTime"));
+                                break;
+                        }
+                    }
+                    // 基本资料
+                    Map<String, String> baseInfo = JsonParser.parseJSONObject(map.get("khMx"));
+                    // 户口本 --- 家庭类型
+                    List<ImageBean> bookLists = JsonParser.parseJSONArray(ImageBean.class, map.get("imgs"));
+                    for (int i = 0; i < ListUtils.getSize(mList.get(1).getInfo()); i++) {
+                        switch (i){
+                            case 0:             // 会员卡分类
+                                mList.get(1).getInfo().get(i).setLabel(baseInfo.get("memberType"));
+                                break;
+                            case 1:             // 姓名
+                                mList.get(1).getInfo().get(i).setLabel(baseInfo.get("name"));
+                                break;
+                            case 2:             // 性别
+                                mList.get(1).getInfo().get(i).setLabel(baseInfo.get("sex"));
+                                break;
+                            case 3:             // 手机号
+                                mList.get(1).getInfo().get(i).setLabel(baseInfo.get("tel"));
+                                break;
+                            case 4:             // 身份证号
+                                mList.get(1).getInfo().get(i).setLabel(baseInfo.get("idCard"));
+                                break;
+                            case 5:
+                                // 身份证正面
+                                mList.get(1).getInfo().get(i).getIdCardList().get(0).setPath(baseInfo.get("idCardFront"));
+                                // 身份证背面
+                                mList.get(1).getInfo().get(i).getIdCardList().get(1).setPath(baseInfo.get("idcardBack"));
+                                break;
+                            case 6:              // 户口本
+                                mList.get(1).getInfo().get(i).setBookList(bookLists);
+                                break;
+                        }
+                    }
+                    mDialog.dismissDialog();
+                    Message msg = new Message();
+                    msg.what = INITIAL_SIZE;
+                    mHandler.sendMessage(msg);
+                    //VIPCardBean
                 }
             }
         }
