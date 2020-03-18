@@ -17,6 +17,8 @@ public final class Contants {
      * 0x1004：联盟活动列表
      * 0x1005: 点击的是个人会员
      * 0x1006: 点击的是家庭会员
+     * 0x1007: 点击的身份证正面
+     * 0x1008: 点击的身份证背面
      */
     public static int CLICK_POSITION_SIZE = -1;
 
@@ -50,4 +52,11 @@ public final class Contants {
      */
     public static final int SCANCHECKCODE = 0x0001;
 
+    /**
+     * 医院搜索页面返回请求码、结果码
+     */
+    public static String Conditions;
+    public static final int HOSPITAL_RESULT_CODE = 0x002;
+    public static final int DYNAMIC_RESULT_CODE = 0x003;
+    public static final int ACTIVITY_RESULT_CODE = 0x004;
 }

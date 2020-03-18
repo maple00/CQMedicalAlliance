@@ -1,6 +1,5 @@
 package com.rainwood.medicalalliance.ui.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,9 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.medicalalliance.R;
+import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.domain.HospitalBean;
 
 import java.util.List;
@@ -65,7 +64,7 @@ public class HospitalListAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         // 缩略图异步加载
-        Glide.with(convertView).load(getItem(position).getImg())
+        Glide.with(convertView).load(Contants.ROOT_URI + getItem(position).getLogoSrc())
                 .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())  // 设置圆角
                 .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
                 .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片

@@ -41,12 +41,14 @@ import com.rainwood.medicalalliance.okhttp.JsonParser;
 import com.rainwood.medicalalliance.okhttp.OnHttpListener;
 import com.rainwood.medicalalliance.request.RequestPost;
 import com.rainwood.medicalalliance.ui.activity.BuyRecordActivity;
+import com.rainwood.medicalalliance.ui.activity.ModifyActivity;
 import com.rainwood.medicalalliance.ui.activity.VIPTypeActivity;
 import com.rainwood.medicalalliance.ui.dialog.MenuDialog;
 import com.rainwood.medicalalliance.upload.OnUploadListener;
 import com.rainwood.medicalalliance.upload.UploadParams;
 import com.rainwood.medicalalliance.upload.UploadResponse;
 import com.rainwood.medicalalliance.upload.Uploader;
+import com.rainwood.medicalalliance.utils.DialogUtils;
 import com.rainwood.scantools.android.QRCodeCaptureActivity;
 import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.permission.OnPermission;
@@ -79,7 +81,6 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
     private TextView mTips;
     private TextView mReference;            // 有推荐人的时候显示推荐人
     private TextView mScanReference;        // 没有推荐人的时候显示扫码添加推荐人
-    private TextView mVIPContent;           // VIP 特权内容
     private Button mBuyVIP;
 
     // 是会员的情况
@@ -95,6 +96,8 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
 
     private ImageView mImg;
     private TextView mScanAdd;
+
+    private DialogUtils mDialog;
 
     @Override
     protected int initLayout() {
@@ -113,7 +116,6 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
             mImg.setOnClickListener(this);
             mName = view.findViewById(R.id.tv_name);
             mName.setOnClickListener(this);
-
             // 扫码添加推荐人
             mScanAdd = view.findViewById(R.id.tv_scan_add);
             mScanAdd.getPaint().setFlags(Paint.UNDERLINE_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
@@ -127,7 +129,6 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
             buyRecord.setOnClickListener(this);
             Button buyVip = view.findViewById(R.id.btn_buy_vip);
             buyVip.setOnClickListener(this);
-
             // 头像
             Glide.with(Objects.requireNonNull(getActivity()))
                     .load(R.drawable.icon_loading_fail)
@@ -143,10 +144,10 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
             mHeadImg.setOnClickListener(this);
             mNickName = view.findViewById(R.id.tv_name);
             mNickClick = view.findViewById(R.id.ll_nick);
+            mWebView = view.findViewById(R.id.wv_content);
             mTips = view.findViewById(R.id.tv_tips);
             mReference = view.findViewById(R.id.tv_reference);
             mScanReference = view.findViewById(R.id.tv_scan_reference);
-            mVIPContent = view.findViewById(R.id.tv_content);
             mNickClick.setOnClickListener(this);
             mScanReference.setOnClickListener(this);
             mBuyVIP = view.findViewById(R.id.btn_buy_vip);
@@ -157,6 +158,8 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
     @Override
     protected void initData(Context mContext) {
         // 初始化请求接口
+        mDialog = new DialogUtils(getContext(), "加载中");
+        mDialog.showDialog();
         RequestPost.VIPData(this);
     }
 
@@ -183,13 +186,15 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                     startActivity(BuyRecordActivity.class);
                     break;
                 case R.id.tv_name:
-                    toast("修改资料");
+                   // toast("修改资料");
+                    startActivity(ModifyActivity.class);
                     break;
             }
         } else {                    // --- 不是会员的情况
             switch (v.getId()) {
                 case R.id.ll_nick:
-                    toast("用户信息");
+                    //toast("用户信息");
+                    startActivity(ModifyActivity.class);
                     break;
                 case R.id.tv_scan_reference:
                     //toast("扫码添加推荐人");
@@ -219,20 +224,25 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                 case INITIAL_SIZE:
                     if (Contants.mLoginner != null) {
                         if (!Contants.hasMembers) {         // 不是会员的时候
+                            initWebView();
                             Glide.with(Objects.requireNonNull(getActivity())).load(R.drawable.icon_loading_fail)
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
                                     .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
                                     .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
                                     .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
                                     .into(mHeadImg);
-                            mNickName.setText("西瓜今天也很皮");
-                            mTips.setText("你目前还不是VIP会员");
+                            // 昵称
+                            if (TextUtils.isEmpty(mVipData.getContactName())) {
+                                mNickName.setText("暂时没有设置昵称");
+                            } else {
+                                mNickName.setText(mVipData.getContactName());
+                            }
+                            if ("0".equals(Contants.mLoginner.getIfKehu())){        // 不是会员
+                                mTips.setText("你目前还不是VIP会员");
+                            }
                         } else {                             // 是会员的情况
                             // vip特权解析
                             initWebView();
-                            mName.setText(Contants.mLoginner.getContactName());
-                            // 用户信息
-
                             // 昵称
                             if (TextUtils.isEmpty(mVipData.getContactName())) {
                                 mName.setText("暂时没有设置昵称");
@@ -250,7 +260,7 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                             }
                         }
                     } else {
-                        Log.i(TAG, "It`s a bug");
+                        Log.i(TAG, "loginner is empty!!!");
                     }
                     break;
                 case SCAN_SIZE:
@@ -410,6 +420,7 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("library/mData.php?type=kehuMx")) {          // 个人中心数据
                     mVipData = JsonParser.parseJSONObject(VIPCenterBean.class, body.get("data"));
+                    mDialog.dismissDialog();
                     // VIP特权解析
                     if (mVipData != null) {
                         for (ArticleBean article : mVipData.getArticle()) {

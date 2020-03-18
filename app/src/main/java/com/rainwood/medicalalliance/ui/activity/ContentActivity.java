@@ -44,8 +44,10 @@ public final class ContentActivity extends BaseActivity implements View.OnClickL
         if (Contants.CLICK_POSITION_SIZE == 0x1004) {
             mPageTitle.setText("联盟活动详情");
         }
-
-        initWebView();
+        content = (String) getIntent().getSerializableExtra("content");
+        if (content != null) {
+            initWebView();
+        }
     }
 
     @Override
@@ -69,7 +71,7 @@ public final class ContentActivity extends BaseActivity implements View.OnClickL
         settings.setUseWideViewPort(true);
         settings.setLoadWithOverviewMode(true);
         settings.setSupportZoom(true);  //支持放大缩小
-        settings.setBuiltInZoomControls(true); //显示缩放按钮
+        settings.setBuiltInZoomControls(false); //显示缩放按钮
         settings.setBlockNetworkImage(true);// 把图片加载放在最后来加载渲染
         settings.setAllowFileAccess(true); // 允许访问文件
         settings.setSaveFormData(true);
@@ -99,29 +101,19 @@ public final class ContentActivity extends BaseActivity implements View.OnClickL
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mCookieManager.setAcceptThirdPartyCookies(mWebView, true);
         }
-        mWebView.loadDataWithBaseURL(null, htmlStr,
+        mWebView.loadDataWithBaseURL(null, startStr + content + endStr,
                 "text/html", "utf-8", null);
     }
 
 
-    /*
-    模拟数据 https://www.baidu.com/img/bd_logo.png
-     */
-    private String htmlStr = "<html>\n" +
+    private String content = null;
+    private String startStr = "<html>\n" +
             "    <head>\n" +
             "        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n" +
-            "        <style>img{max-width: 100%; width:100%; height:auto;}*{margin:0px;}</style>\n" +
+            "        <style>img{max-width: 100%; width:100%; margin:15px 0;height:auto;}*{margin:0px;}</style>\n" +
             "    </head>\n" +
             "    <body>\n" +
-            "        <p style=\"text-align: left;\">" +
-            "<img src=\"https://www.baidu.com/img/bd_logo.png\"\n" +
-            "             title=\"1541054060899024343.jpg\" alt=\"4.jpg\" />" +
-            "<img src=\"https://ss1.bdstatic.com/70cFvXSh_Q1YnxGkpoWK1HF6hhy/it/u=1383902695,1129447956&fm=26&gp=0.jpg\"\n" +
-            "             title=\"1541054054758015328.jpg\" alt=\"1.jpg\" />" +
-            "<img src=\"https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=2353449440,2528668120&fm=26&gp=0.jpg\"\n" +
-            "             title=\"1541054057414099008.jpg\" alt=\"2.jpg\" />" +
-            "<img src=\"https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=3446458559,1680525880&fm=26&gp=0.jpg\"\n" +
-            "             title=\"1541054060899024343.jpg\" alt=\"3.jpg\" />" +
-            "</p>\n" + "</body>\n" +
-            "</html>";
+            "    <p style=\"text-align: left;\">";
+    private String endStr = "</p>\n" + "</body>\n" + "</html>";
+
 }

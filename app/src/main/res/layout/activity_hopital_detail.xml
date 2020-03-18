@@ -20,12 +20,10 @@
 
 
             <!-- 此处放置视频略图或者图片-->
-            <ImageView
-                android:id="@+id/iv_top_desc"
+            <com.stx.xhb.xbanner.XBanner
+                android:id="@+id/xvp_banner"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/icon_loading_fail" />
+                android:layout_height="200dp" />
 
             <TextView
                 android:id="@+id/tv_name"
@@ -158,12 +156,11 @@
 
             </LinearLayout>
 
-            <!-- 内嵌高德地图位置-->
-            <ImageView
+            <!-- 高德地图-->
+            <com.amap.api.maps.MapView
+                android:id="@+id/mv_map"
                 android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:scaleType="fitXY"
-                android:src="@drawable/icon_loading_fail" />
+                android:layout_height="200dp"/>
 
             <!-- 医院介绍、医生团队-->
             <LinearLayout

@@ -9,17 +9,29 @@ import java.io.Serializable;
  */
 public class HospitalBean implements Serializable {
 
-    private String img;             // 医院图标
+    private String id;
     private String name;            // 医院名称
+    private String logoSrc;         // 医院logo
     private String address;         // 医院地址
-    private String distance;        // 医院距离
+    private String distance;        // 距离
 
-    public String getImg() {
-        return img;
+    @Override
+    public String toString() {
+        return "HospitalBean{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", logoSrc='" + logoSrc + '\'' +
+                ", address='" + address + '\'' +
+                ", distance='" + distance + '\'' +
+                '}';
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -28,6 +40,14 @@ public class HospitalBean implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getLogoSrc() {
+        return logoSrc;
+    }
+
+    public void setLogoSrc(String logoSrc) {
+        this.logoSrc = logoSrc;
     }
 
     public String getAddress() {

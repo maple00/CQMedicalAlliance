@@ -3,6 +3,7 @@ package com.rainwood.medicalalliance.base;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -11,11 +12,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 
+import com.rainwood.medicalalliance.common.StatusManager;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.toast.ToastUtils;
 
@@ -166,5 +169,54 @@ public abstract class BaseFragment<A extends BaseActivity> extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    private final StatusManager mStatusManager = new StatusManager();
+
+    /**
+     * 显示加载中
+     */
+    public void showLoading() {
+        mStatusManager.showLoading(getActivity());
+    }
+
+    public void showLoading(@StringRes int id) {
+        mStatusManager.showLoading(getActivity(), getString(id));
+    }
+
+    public void showLoading(CharSequence text) {
+        mStatusManager.showLoading(getActivity(), text);
+    }
+
+    /**
+     * 显示加载完成
+     */
+    public void showComplete() {
+        mStatusManager.showComplete();
+    }
+
+    /**
+     * 显示空提示
+     */
+    public void showEmpty() {
+        mStatusManager.showEmpty(getView());
+    }
+
+    /**
+     * 显示错误提示
+     */
+    public void showError() {
+        mStatusManager.showError(getView());
+    }
+
+    /**
+     * 显示自定义提示
+     */
+    public void showLayout(@DrawableRes int drawableId, @StringRes int stringId) {
+        mStatusManager.showLayout(getView(), drawableId, stringId);
+    }
+
+    public void showLayout(Drawable drawable, CharSequence hint) {
+        mStatusManager.showLayout(getView(), drawable, hint);
     }
 }

@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.os.Build;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -16,17 +18,13 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseActivity;
+import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.helper.BottomNavigationViewHelper;
 import com.rainwood.medicalalliance.ui.fragment.HomeFragment;
 import com.rainwood.medicalalliance.ui.fragment.HospitalDescFragment;
 import com.rainwood.medicalalliance.ui.fragment.VIPCenterFragment;
-import com.rainwood.tools.permission.OnPermission;
-import com.rainwood.tools.permission.Permission;
-import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.viewinject.ViewById;
-
-import java.util.List;
 
 /**
  * @Author: a797s
@@ -111,6 +109,7 @@ public final class HomeActivity extends BaseActivity implements BottomNavigation
     }
 
     private static int rebackFlag = -1;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {         // 回到Home页
@@ -129,11 +128,25 @@ public final class HomeActivity extends BaseActivity implements BottomNavigation
         }
         return super.onKeyDown(keyCode, event);
     }
+
+    /**
+     * 页面返回的  方法重写
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Contants.HOSPITAL_RESULT_CODE) {     // 响应码 --- 从医院搜索框返回的
+            HomeActivity activity = (HomeActivity) getActivity();
+            FragmentManager fragmentManager = activity.getSupportFragmentManager();
+            FragmentTransaction transaction = fragmentManager.beginTransaction();
+            transaction.replace(R.id.fragment_empty, new HospitalDescFragment());
+            transaction.commit();
+        }
+    }
     /**
      * 当BottonNavigationBar 的items大于三个时
      * 取消这个底部导航栏的动画效果
      */
-
 
 }
 

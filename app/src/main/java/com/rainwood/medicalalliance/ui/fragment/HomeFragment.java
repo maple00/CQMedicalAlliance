@@ -2,8 +2,11 @@ package com.rainwood.medicalalliance.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -14,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseFragment;
 import com.rainwood.medicalalliance.common.Contants;
+import com.rainwood.medicalalliance.domain.ArticleBean;
 import com.rainwood.medicalalliance.domain.DynamicBean;
 import com.rainwood.medicalalliance.domain.HomePageBean;
 import com.rainwood.medicalalliance.domain.PressBean;
@@ -25,6 +29,7 @@ import com.rainwood.medicalalliance.request.RequestPost;
 import com.rainwood.medicalalliance.ui.activity.AllianceActivity;
 import com.rainwood.medicalalliance.ui.activity.ContentActivity;
 import com.rainwood.medicalalliance.ui.activity.LoginMainActivity;
+import com.rainwood.medicalalliance.ui.activity.VIPTypeActivity;
 import com.rainwood.medicalalliance.ui.adapter.HomeContentAdapter;
 import com.rainwood.medicalalliance.ui.adapter.TopTypeAdapter;
 import com.rainwood.medicalalliance.utils.DialogUtils;
@@ -34,6 +39,7 @@ import com.rainwood.tools.widget.XCollapsingToolbarLayout;
 import com.stx.xhb.xbanner.XBanner;
 import com.stx.xhb.xbanner.transformers.Transformer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -139,7 +145,8 @@ public final class HomeFragment extends BaseFragment implements OnHttpListener {
                                 startActivity(AllianceActivity.class);
                                 break;
                             case 2:             // 激活会员
-                                toast("激活会员");
+                                //toast("激活会员");
+                                startActivity(VIPTypeActivity.class);
                                 break;
                         }
                     });
@@ -157,12 +164,45 @@ public final class HomeFragment extends BaseFragment implements OnHttpListener {
                     });
                     // 查看详情
                     contentAdapter.setSubItem((parentPos, position) -> {
+                        StringBuffer content = new StringBuffer();
+                        Intent intent = new Intent(getContext(), ContentActivity.class);
                         if (parentPos == 0) {
-                            Contants.CLICK_POSITION_SIZE = 0x1003;
+                            Contants.CLICK_POSITION_SIZE = 0x1003;          // 联盟动态
+                            if (!TextUtils.isEmpty(mList.get(parentPos).getDongtai().get(position).getPhotoSrc())) {      // 如果有图片
+                                content.append("<img src=\"" + Contants.ROOT_URI + mList.get(parentPos).getDongtai().get(position).getPhotoSrc() + "\" alt=\"" + mList.get(position).getTitle() + "\"" + "/>\n");
+                            }
+                            if (!TextUtils.isEmpty(mList.get(parentPos).getDongtai().get(position).getVideoSrc())) {          // 如果有视频
+                                //content.append()
+                            }
+                            if (mList.get(parentPos).getDongtai().get(position).getArticle() != null && mList.get(parentPos).getDongtai().get(position).getArticle().size() != 0) {      // 如果有文章
+                                for (ArticleBean articleBean : mList.get(parentPos).getDongtai().get(position).getArticle()) {
+                                    if (TextUtils.isEmpty(articleBean.getImg())) {
+                                        content.append(articleBean.getWord());
+                                    } else {
+                                        content.append("<img src=\"" + Contants.ROOT_URI + articleBean.getImg() + "\" alt=\"" + articleBean.getType() + "\"" + "/>\n");
+                                    }
+                                }
+                            }
                         } else {
-                            Contants.CLICK_POSITION_SIZE = 0x1004;
+                            Contants.CLICK_POSITION_SIZE = 0x1004;          // 联盟活动
+                            if (!TextUtils.isEmpty(mList.get(parentPos).getHuodong().get(position).getPhotoSrc())) {      // 如果有图片
+                                content.append("<img src=\"" + Contants.ROOT_URI + mList.get(parentPos).getHuodong().get(position).getPhotoSrc() + "\" alt=\"" + mList.get(position).getTitle() + "\"" + "/>\n");
+                            }
+                            if (!TextUtils.isEmpty(mList.get(parentPos).getHuodong().get(position).getVideoSrc())) {          // 如果有视频
+                                //content.append()
+                            }
+                            if (mList.get(parentPos).getHuodong().get(position).getArticle() != null && mList.get(parentPos).getHuodong().get(position).getArticle().size() != 0) {      // 如果有文章
+                                for (ArticleBean articleBean : mList.get(parentPos).getHuodong().get(position).getArticle()) {
+                                    if (TextUtils.isEmpty(articleBean.getImg())) {
+                                        content.append(articleBean.getWord());
+                                    } else {
+                                        content.append("<img src=\"" + Contants.ROOT_URI + articleBean.getImg() + "\" alt=\"" + articleBean.getType() + "\"" + "/>\n");
+                                    }
+                                }
+                            }
                         }
-                        startActivity(ContentActivity.class);
+                        intent.putExtra("content", (Serializable) content);
+                        startActivity(intent);
                     });
                     break;
             }
@@ -208,11 +248,10 @@ public final class HomeFragment extends BaseFragment implements OnHttpListener {
                     mHandler.sendMessage(msg);
                 } else if (result.url().contains("library/mData.php?type=getImgShou")) {              // 首页轮播图
                     imgagesList = JsonParser.parseJSONArray(ShufflingBean.class, body.get("data"));
-
                 }
             } else {
                 toast(body.get("warn"));
-                if ("未登录".equals(body.get("warn"))){
+                if ("未登录".equals(body.get("warn"))) {
                     startActivity(LoginMainActivity.class);
                 }
             }
@@ -223,6 +262,7 @@ public final class HomeFragment extends BaseFragment implements OnHttpListener {
 
     private void setXBanner() {
         // 请求轮播图的src
+
     }
 
     private List<PressBean> mTopItemList;

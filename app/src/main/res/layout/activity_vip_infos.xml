@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -16,8 +17,8 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="30dp">
+            android:layout_marginBottom="30dp"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -69,7 +70,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/shape_uncheck_shape" />
+                    android:src="@drawable/shape_checked_shape" />
 
                 <TextView
                     android:id="@+id/tv_man"
@@ -85,7 +86,7 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_marginStart="15dp"
-                    android:src="@drawable/shape_checked_shape" />
+                    android:src="@drawable/shape_uncheck_shape" />
 
                 <TextView
                     android:id="@+id/tv_woman"
@@ -156,6 +157,12 @@
                         android:textColor="@color/fontGray"
                         android:textSize="13sp" />
 
+                    <ImageView
+                        android:id="@+id/iv_card_font"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY" />
+
                 </FrameLayout>
 
                 <Space
@@ -186,6 +193,12 @@
                         android:textColor="@color/fontGray"
                         android:textSize="13sp" />
 
+                    <ImageView
+                        android:id="@+id/iv_behind"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitXY" />
+
                 </FrameLayout>
 
             </LinearLayout>
@@ -202,10 +215,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="请上传您的户口本照片"
-                    android:textSize="13sp"
                     android:layout_marginTop="20dp"
-                    android:textColor="@color/gray10"/>
+                    android:text="请上传您的户口本照片"
+                    android:textColor="@color/gray10"
+                    android:textSize="13sp" />
 
                 <com.rainwood.tools.widget.MeasureGridView
                     android:id="@+id/mgv_family_vip"
@@ -242,13 +255,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:hint="请输入手机号"
-                    android:inputType="phone" />
+                    android:inputType="phone"
+                    app:regexType="mobile"/>
 
-                <TextView
-                    android:id="@+id/tv_send_code"
+                <Button
+                    android:id="@+id/btn_send_code"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_marginStart="10dp"
+                    android:background="@null"
                     android:gravity="center"
                     android:paddingStart="3dp"
                     android:paddingEnd="3dp"

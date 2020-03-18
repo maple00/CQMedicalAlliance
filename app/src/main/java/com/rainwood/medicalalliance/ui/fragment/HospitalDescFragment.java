@@ -2,14 +2,17 @@ package com.rainwood.medicalalliance.ui.fragment;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.TypedArrayUtils;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -25,11 +28,18 @@ import com.amap.api.maps.model.LatLng;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseDialog;
 import com.rainwood.medicalalliance.base.BaseFragment;
+import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.domain.HospitalBean;
+import com.rainwood.medicalalliance.okhttp.HttpResponse;
+import com.rainwood.medicalalliance.okhttp.JsonParser;
+import com.rainwood.medicalalliance.okhttp.OnHttpListener;
+import com.rainwood.medicalalliance.request.RequestPost;
 import com.rainwood.medicalalliance.ui.activity.HospitalDetailActivity;
 import com.rainwood.medicalalliance.ui.activity.SearchViewActivity;
 import com.rainwood.medicalalliance.ui.adapter.HospitalListAdapter;
 import com.rainwood.medicalalliance.ui.dialog.AddressDialog;
+import com.rainwood.medicalalliance.utils.DialogUtils;
+import com.rainwood.medicalalliance.utils.ListUtils;
 import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
 import com.rainwood.tools.permission.XXPermissions;
@@ -39,13 +49,14 @@ import com.rainwood.tools.widget.MeasureListView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2020/3/6 17:36
  * @Desc: 医院介绍
  */
-public final class HospitalDescFragment extends BaseFragment implements View.OnClickListener, AMapLocationListener, LocationSource {
+public final class HospitalDescFragment extends BaseFragment implements View.OnClickListener, AMapLocationListener, LocationSource, OnHttpListener {
 
     private MeasureListView mContentList;
     private TextView mLocation;
@@ -63,8 +74,10 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
     private String mCity;           // 默认市
     private String mArea;           // 默认区
     private String mAddress;        // 默认地址
+    private double mLat;            // 纬度
+    private double mLng;            // 经度
 
-
+    private DialogUtils mDialog;
     private List<HospitalBean> mList;
 
     // mHandler
@@ -85,10 +98,6 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
         mSearch = view.findViewById(R.id.et_search);
         mMapView = view.findViewById(R.id.mv_map);
         initEvents();
-
-        Message msg = new Message();
-        msg.what = INITIAL_SIZE;
-        mHandler.sendMessage(msg);
     }
 
     private void initEvents() {
@@ -144,17 +153,9 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
     @Override
     protected void initData(Context mContext) {
         // 初始化定位权限
+        mDialog = new DialogUtils(getContext(), "定位中");
+        mDialog.showDialog();
         initPermissions();
-
-        mList = new ArrayList<>();
-        for (int i = 0; i < 8; i++) {
-            HospitalBean hospital = new HospitalBean();
-            hospital.setImg(null);
-            hospital.setName("陆军军医大学第一附属医院重庆西南医院");
-            hospital.setAddress("重庆市沙坪坝区新桥正街83号");
-            hospital.setDistance("12.4km");
-            mList.add(hospital);
-        }
     }
 
     @Override
@@ -168,7 +169,7 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
                         // 设置默认省份   -- 默认城市通过定位显示出来
                         .setProvince(mProvince)
                         // 设置默认城市(必须先设置默认省份)
-                         .setCity(mCity)
+                        .setCity(mCity)
                         // 不选择县级区域
                         //.setIgnoreArea()
                         .setListener(new AddressDialog.OnListener() {
@@ -176,8 +177,11 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
                             public void onSelected(BaseDialog dialog, String province, String city, String area) {
                                 dialog.dismiss();
                                 mLocation.setText(province);
-                               // TODO: 查询先择的省市区范围内的医院list
-
+                                // TODO: 查询先择的省市区范围内的医院list
+                                mDialog.showDialog();
+                                // 请求列表数据
+                                RequestPost.getHospitalList("", mProvince, mCity, mArea,
+                                        String.valueOf(mLat), String.valueOf(mLng), HospitalDescFragment.this);
                             }
 
                             @Override
@@ -186,9 +190,9 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
                             }
                         }).show();
                 break;
-            case R.id.et_search:
-                // toast("点击");
-                startActivity(SearchViewActivity.class);
+            case R.id.et_search:                // 搜索医院
+                Intent intent = new Intent(getContext(), SearchViewActivity.class);
+                startActivityForResult(intent, Contants.HOSPITAL_RESULT_CODE);
                 break;
         }
     }
@@ -203,8 +207,10 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
                     HospitalListAdapter hospitalListAdapter = new HospitalListAdapter(getActivity(), mList);
                     mContentList.setAdapter(hospitalListAdapter);
                     hospitalListAdapter.setOnClickItem(position -> {
-                        // TODO: 查看详情
-                        startActivity(HospitalDetailActivity.class);
+                        // TODO: 查看详情 -- 带id
+                        Intent intent = new Intent(getActivity(), HospitalDetailActivity.class);
+                        intent.putExtra("hospital", mList.get(position));
+                        startActivity(intent);
                     });
                     break;
             }
@@ -223,11 +229,29 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
             mCity = aMapLocation.getCity();
             mArea = aMapLocation.getDistrict();
             mAddress = aMapLocation.getAddress();
+            mLat = aMapLocation.getLatitude();
+            mLng = aMapLocation.getLongitude();
 
             // 默认地址
             mLocation.setText(mProvince);
             // TODO: 查询省市区内的医院list
-
+            // 请求列表数据
+            // 如果有搜索条件，则是从搜索页面返回滴
+            Log.d(TAG, "查询条件：" + Contants.Conditions);
+            mDialog.dismissDialog();
+            if (Contants.Conditions != null){
+                mDialog = new DialogUtils(getContext(), "查询中");
+                mDialog.showDialog();
+                RequestPost.getHospitalList(Contants.Conditions, mProvince, mCity, mArea,
+                        String.valueOf(mLat), String.valueOf(mLng), this);
+                // 将查询条件使用完成后置空
+                Contants.Conditions = null;
+            }else {
+                mDialog = new DialogUtils(getContext(), "加载中");
+                mDialog.showDialog();
+                RequestPost.getHospitalList("", mProvince, mCity, mArea,
+                        String.valueOf(mLat), String.valueOf(mLng), this);
+            }
            /* //定位成功回调信息，设置相关消息
             Log.d(TAG, "当前定位结果来源-----" + aMapLocation.getLocationType());//获取当前定位结果来源，如网络定位结果，详见定位类型表
             Log.d(TAG, "纬度 ----------------" + aMapLocation.getLatitude());//获取纬度
@@ -257,7 +281,7 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
             //设置为高精度定位模式
             mLocationOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
             //设置定位参数
-            mLocationOption.setOnceLocation(true);//只定位一次
+            mLocationOption.setOnceLocation(true);          //只定位一次
             mLocationOption.setHttpTimeOut(2000);
             mLocationClient.setLocationOption(mLocationOption);
             // 此方法为每隔固定时间会发起一次定位请求，为了减少电量消耗或网络流量消耗，
@@ -304,5 +328,33 @@ public final class HospitalDescFragment extends BaseFragment implements View.OnC
         mLocationClient = null;
         mMap = null;
         mMapView.onDestroy();
+    }
+
+    @Override
+    public void onHttpFailure(HttpResponse result) {
+
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                if (result.url().contains("library/mData.php?type=getHospitalList")) {          // 获取医院列表
+                    mList = JsonParser.parseJSONArray(HospitalBean.class, body.get("data"));
+                    if (ListUtils.getSize(mList) == 0){
+                        toast("当前查询无效！！！");
+                    }else {
+                        Message msg = new Message();
+                        msg.what = INITIAL_SIZE;
+                        mHandler.sendMessage(msg);
+                    }
+                    mDialog.dismissDialog();
+                }
+            } else {
+                toast(body.get("warn"));
+                postDelayed(() -> mDialog.dismissDialog(), 500);
+            }
+        }
     }
 }

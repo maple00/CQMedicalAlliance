@@ -12,7 +12,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         ndk {
             //设置支持的SO库架构（开发者可以根据需要，选择一个或多个平台的so）
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
+            abiFilters "armeabi-v7a", "arm64-v8a"
         }
     }
 
@@ -52,6 +52,7 @@ dependencies {
 
     // 工具包
     implementation project(path: ':tools')
+    // 扫一扫
     implementation project(path: ':scantools')
     //AndroidX支持
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -88,8 +89,9 @@ dependencies {
     //搜索功能
     implementation 'com.amap.api:search:7.1.0'
 
-    // 支付宝支付 支持
-    // implementation (name: 'alipaySdk-15.5.7-20181023110917', ext: 'aar')
+    // alibaba (活体实体、支付宝支付)支持
+    implementation (name:'rpsdk-3.3.0.1', ext:'aar')
+
 
     // 微信、QQ支持
 }

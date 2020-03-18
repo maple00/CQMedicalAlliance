@@ -19,6 +19,7 @@
     <string name="common_cancel">取消</string>
     <string name="common_text_change">修改</string>
     <string name="common_text_logout">退出登录</string>
+    <string name="common_logout">退出</string>
     <string name="common_view_full">查看全部</string>
     <string name="common_search">搜索</string>
 

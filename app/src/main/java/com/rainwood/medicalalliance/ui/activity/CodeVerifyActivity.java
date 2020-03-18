@@ -201,6 +201,7 @@ public final class CodeVerifyActivity extends BaseActivity implements OnClickLis
                 }
             } else {
                 toast(body.get("warn"));
+                mDialog.dismissDialog();
             }
         }
 
@@ -212,5 +213,11 @@ public final class CodeVerifyActivity extends BaseActivity implements OnClickLis
             return false;
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mDialog.dismissDialog();
     }
 }

@@ -1,6 +1,7 @@
 package com.rainwood.medicalalliance.ui.activity;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -56,9 +57,7 @@ public final class SetPwdActivity extends BaseActivity implements View.OnClickLi
                     break;
                 }
                 mDialog.showDialog();
-
                 RequestPost.RegisterPwdCheck(mPassword.getText().toString().trim(), this);
-                //openActivity(HomeActivity.class);
                 break;
         }
     }
@@ -74,6 +73,7 @@ public final class SetPwdActivity extends BaseActivity implements View.OnClickLi
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("library/mData.php?type=inPassword")) {
+                    Log.d(TAG, " --- " + body.get("data"));
                     openActivity(HomeActivity.class);
                 }
             }else {

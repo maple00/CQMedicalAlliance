@@ -1,6 +1,12 @@
 package com.rainwood.medicalalliance.ui.activity;
 
+import android.app.Fragment;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -12,16 +18,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.base.BaseActivity;
+import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.helper.DbDao;
+import com.rainwood.medicalalliance.okhttp.HttpResponse;
+import com.rainwood.medicalalliance.okhttp.JsonParser;
+import com.rainwood.medicalalliance.okhttp.OnHttpListener;
 import com.rainwood.medicalalliance.ui.adapter.SeachRecordAdapter;
+import com.rainwood.medicalalliance.ui.fragment.HospitalDescFragment;
+import com.rainwood.tools.view.ClearEditText;
 import com.rainwood.tools.viewinject.ViewById;
+
+import java.util.Map;
 
 /**
  * @Author: a797s
  * @Date: 2019/12/5 11:44
  * @Desc: 含历史记录的搜索框
  */
-public final class SearchViewActivity extends BaseActivity implements View.OnClickListener {
+public final class SearchViewActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
 
     @Override
@@ -32,7 +46,7 @@ public final class SearchViewActivity extends BaseActivity implements View.OnCli
     @ViewById(R.id.tv_search)
     private TextView mtvSearch;
     @ViewById(R.id.et_search)
-    private EditText met_search;
+    private ClearEditText met_search;
 
     @ViewById(R.id.iv_back)
     private ImageView pageBack;
@@ -53,6 +67,13 @@ public final class SearchViewActivity extends BaseActivity implements View.OnCli
         mDbDao = new DbDao(this);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new SeachRecordAdapter(mDbDao.queryData(""), this);
+        if (Contants.CLICK_POSITION_SIZE == 0x1003) {    // 联盟动态
+            met_search.setHint("搜索你想看的动态");
+        } else if (Contants.CLICK_POSITION_SIZE == 0x1004) {     // 联盟活动
+            met_search.setHint("搜索你想看的活动");
+        }else {                                                                 // 搜索医院
+            met_search.setHint("搜索医院名称");
+        }
         // 查询历史记录
         mAdapter.setRvItemOnclickListener(position -> {
             mDbDao.delete(mDbDao.queryData("").get(position));
@@ -92,17 +113,30 @@ public final class SearchViewActivity extends BaseActivity implements View.OnCli
                     if (!hasData) {
                         mDbDao.insertData(met_search.getText().toString().trim());
                     } else {
-                        toast("该内容已在历史记录中");
+                        // toast("该内容已在历史记录中");
                     }
                     mAdapter.updata(mDbDao.queryData(""));
-                    /*
-                    去查询的地方
-                     */
+                    // TODO: 搜索内容
+                    Contants.Conditions = met_search.getText().toString().trim();
+                    if (Contants.CLICK_POSITION_SIZE == 0x1003) {    // 联盟动态
+                        setResult(Contants.DYNAMIC_RESULT_CODE);
+                    } else if (Contants.CLICK_POSITION_SIZE == 0x1004) {     // 联盟活动
+                        setResult(Contants.ACTIVITY_RESULT_CODE);
+                    }else {                                                                 // 搜索医院
+                        setResult(Contants.HOSPITAL_RESULT_CODE);
+                    }
+                    finish();
                 } else {
                     toast("请输入内容");
                 }
                 break;
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        Contants.Conditions = null;
+        return super.onKeyDown(keyCode, event);
     }
 
     /**
@@ -117,5 +151,22 @@ public final class SearchViewActivity extends BaseActivity implements View.OnCli
         inputManager.showSoftInput(editText, 0);
     }
 
+    @Override
+    public void onHttpFailure(HttpResponse result) {
 
+    }
+
+    @Override
+    public void onHttpSucceed(HttpResponse result) {
+        Map<String, String> body = JsonParser.parseJSONObject(result.body());
+        if (body != null) {
+            if ("1".equals(body.get("code"))) {
+                if (result.url().contains("library/mData.php?type=getHospitalList")) {      // 查询医院列表
+
+                }
+            } else {
+                toast(body.get("warn"));
+            }
+        }
+    }
 }

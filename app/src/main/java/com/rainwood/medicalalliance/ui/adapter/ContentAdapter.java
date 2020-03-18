@@ -1,6 +1,7 @@
 package com.rainwood.medicalalliance.ui.adapter;
 
 import android.content.Context;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.medicalalliance.R;
+import com.rainwood.medicalalliance.common.Contants;
+import com.rainwood.medicalalliance.domain.ArticleBean;
 import com.rainwood.medicalalliance.domain.ContentCoversBean;
+import com.rainwood.medicalalliance.domain.DynamicBean;
 
 import java.util.List;
 
@@ -26,9 +30,9 @@ import java.util.List;
 public final class ContentAdapter extends BaseAdapter {
 
     private Context mContext;
-    private List<ContentCoversBean> mList;
+    private List<DynamicBean> mList;
 
-    public ContentAdapter(Context context, List<ContentCoversBean> list) {
+    public ContentAdapter(Context context, List<DynamicBean> list) {
         mContext = context;
         mList = list;
     }
@@ -39,7 +43,7 @@ public final class ContentAdapter extends BaseAdapter {
     }
 
     @Override
-    public ContentCoversBean getItem(int position) {
+    public DynamicBean getItem(int position) {
         return mList.get(position);
     }
 
@@ -65,11 +69,17 @@ public final class ContentAdapter extends BaseAdapter {
 
         holder.tv_title.setText(getItem(position).getTitle());
         holder.tv_title.setTextColor(mContext.getResources().getColor(R.color.textColor));
-        holder.tv_text.setText(getItem(position).getText());
+        StringBuffer article = new StringBuffer();
+        for (ArticleBean articleBean : getItem(position).getArticle()) {
+            if (TextUtils.isEmpty(articleBean.getImg())){
+                article.append(articleBean.getWord());
+            }
+        }
+        holder.tv_text.setText(article);
         holder.tv_text.setTextColor(mContext.getResources().getColor(R.color.fontGray));
         RequestOptions options = RequestOptions.bitmapTransform(new RoundedCorners(10));
         // 缩略图异步加载
-        Glide.with(convertView).load(getItem(position).getImgPath())
+        Glide.with(convertView).load(Contants.ROOT_URI + getItem(position).getPhotoSrc())
                 .apply(options)                         // 设置圆角
                 .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
                 .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片

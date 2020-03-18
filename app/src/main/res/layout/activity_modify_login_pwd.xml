@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:orientation="vertical">
+
+    <include layout="@layout/activity_title" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:text="手机号"
+        android:textColor="@color/gray10"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:gravity="center_vertical">
+
+        <com.rainwood.tools.view.ClearEditText
+            android:id="@+id/cet_mobile_num"
+            style="@style/EditTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="请输入手机号"
+            android:inputType="phone"
+            app:regexType="mobile" />
+
+        <TextView
+            android:id="@+id/tv_send_code"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="15dp"
+            android:gravity="center"
+            android:text="发送验证码"
+            android:textColor="@color/green10"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="验证码"
+        android:textColor="@color/gray10"
+        android:textSize="14sp" />
+
+    <com.rainwood.tools.view.ClearEditText
+        android:id="@+id/cet_verify_code"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:hint="请输入验证码"
+        android:inputType="number" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp" />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:text="密码"
+        android:textColor="@color/gray10"
+        android:textSize="14sp" />
+
+    <com.rainwood.tools.view.PasswordEditText
+        android:id="@+id/pet_password"
+        style="@style/EditTextStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="15dp"
+        android:hint="请输入密码"
+        android:inputType="textPassword" />
+
+    <View
+        style="@style/HorizontalLineStyle"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="15dp" />
+
+    <Button
+        android:id="@+id/btn_confirm"
+        style="@style/ButtonDefaultStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="15dp"
+        android:text="@string/common_confirm" />
+</LinearLayout>

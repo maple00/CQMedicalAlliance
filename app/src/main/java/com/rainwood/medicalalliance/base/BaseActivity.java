@@ -34,14 +34,26 @@ public abstract class BaseActivity extends AppCompatActivity {
 //    protected final String TAG = this.getClass().getSimpleName();
     protected final String TAG = "sxs";
 
+    // 需要重写OnCreate的Activity调用
+    private Bundle savedInstanceState;
+
+    public Bundle getSavedInstanceState() {
+        return savedInstanceState;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);      //禁止横屏
+        try {
+            //设置坚屏 一定要放到try catch里面，否则会崩溃
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);   //禁止横屏
+        } catch (Exception e) {
+        }
         super.onCreate(savedInstanceState);
         // 初始化布局
         if (getLayoutId() > 0) {
             setContentView(getLayoutId());
         }
+        this.savedInstanceState = savedInstanceState;
         // 初始化数据
         init();
     }

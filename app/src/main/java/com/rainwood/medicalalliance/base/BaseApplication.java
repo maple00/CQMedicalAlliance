@@ -1,9 +1,11 @@
 package com.rainwood.medicalalliance.base;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.alibaba.security.rp.RPSDK;
 import com.rainwood.medicalalliance.common.ActivityStackManager;
 import com.rainwood.medicalalliance.ui.activity.CrashActivity;
 import com.rainwood.medicalalliance.ui.activity.SplashActivity;
@@ -24,11 +26,13 @@ public class BaseApplication extends Application {
      */
     public static BaseApplication app;
 
+    private Context appContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
         app = this;
+        appContext = getInstance().getApplicationContext();
         // initActivity 初始化Activity 栈管理
         initActivity();
         // 初始化三方的框架
@@ -61,20 +65,8 @@ public class BaseApplication extends Application {
      * 初始化一些三方框架
      */
     private void initSDK() {
-
-        // 本地异常
-        CaocConfig.Builder.create()
-                .backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM)
-                .enabled(true)
-                .trackActivities(true)
-                .minTimeBetweenCrashesMs(2000)
-                // 重启的 Activity
-                .restartActivity(SplashActivity.class)
-                // 错误的 Activity
-                .errorActivity(CrashActivity.class)
-                // 设置监听器
-                //.eventListener(new YourCustomEventListener())
-                .apply();
+        // 初始化实人认证SDK(阿里云)
+        RPSDK.initialize(appContext);
 
     }
 
@@ -97,6 +89,20 @@ public class BaseApplication extends Application {
         });
         // 吐司工具类
         ToastUtils.init(this);
+
+        // 本地异常
+        CaocConfig.Builder.create()
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM)
+                .enabled(true)
+                .trackActivities(true)
+                .minTimeBetweenCrashesMs(2000)
+                // 重启的 Activity
+                .restartActivity(SplashActivity.class)
+                // 错误的 Activity
+                .errorActivity(CrashActivity.class)
+                // 设置监听器
+                //.eventListener(new YourCustomEventListener())
+                .apply();
     }
 
     /**

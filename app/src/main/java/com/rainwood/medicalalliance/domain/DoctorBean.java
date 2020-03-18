@@ -9,40 +9,60 @@ import java.io.Serializable;
  */
 public class DoctorBean implements Serializable {
 
-    private String img;
-    private String name;
-    private String depart;
-    private String desc;
+    private String id;            // 医生id
+    private String doctorName;      // 医生姓名
+    private String sectionName;     // 科室名称
+    private String headSrc;         // 头像
+    private String text;            // 介绍
 
-    public String getImg() {
-        return img;
+    @Override
+    public String toString() {
+        return "DoctorBean{" +
+                "id='" + id + '\'' +
+                ", doctorName='" + doctorName + '\'' +
+                ", sectionName='" + sectionName + '\'' +
+                ", headSrc='" + headSrc + '\'' +
+                ", text='" + text + '\'' +
+                '}';
     }
 
-    public void setImg(String img) {
-        this.img = img;
+    public String getId() {
+        return id;
     }
 
-    public String getName() {
-        return name;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getDoctorName() {
+        return doctorName;
     }
 
-    public String getDepart() {
-        return depart;
+    public void setDoctorName(String doctorName) {
+        this.doctorName = doctorName;
     }
 
-    public void setDepart(String depart) {
-        this.depart = depart;
+    public String getSectionName() {
+        return sectionName;
     }
 
-    public String getDesc() {
-        return desc;
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public String getHeadSrc() {
+        return headSrc;
+    }
+
+    public void setHeadSrc(String headSrc) {
+        this.headSrc = headSrc;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
     }
 }

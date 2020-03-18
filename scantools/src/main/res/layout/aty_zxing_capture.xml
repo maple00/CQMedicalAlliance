@@ -10,7 +10,7 @@
         android:layout_height="fill_parent" />
 
     <!-- 扫描取景框 -->
-    <com.rainwood.zxingqrc.view.ViewfinderView
+    <com.rainwood.scantools.view.ViewfinderView
         android:id="@+id/viewfinder_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
