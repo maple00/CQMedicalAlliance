@@ -113,6 +113,7 @@ public final class SubItemBaseInfoAdapter extends BaseAdapter {
             case 2:
                 imageHolderTwo.tv_title.setText(getItem(position).getTitle());
                 // 图片
+                Log.d("sxs", " 哈哈----" + getItem(position).getBookList());
                 ImageAdapter imageAdapter1 = new ImageAdapter(mContext, getItem(position).getBookList());
                 imageHolderTwo.mgv_image_list.setAdapter(imageAdapter1);
                 imageHolderTwo.mgv_image_list.setNumColumns(3);

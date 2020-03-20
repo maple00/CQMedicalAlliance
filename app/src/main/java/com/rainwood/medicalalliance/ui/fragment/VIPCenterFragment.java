@@ -3,13 +3,14 @@ package com.rainwood.medicalalliance.ui.fragment;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
-import android.text.Html;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ import com.rainwood.medicalalliance.base.BaseFragment;
 import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.domain.ArticleBean;
 import com.rainwood.medicalalliance.domain.VIPCenterBean;
+import com.rainwood.medicalalliance.io.IOUtils;
 import com.rainwood.medicalalliance.okhttp.HttpResponse;
 import com.rainwood.medicalalliance.okhttp.JsonParser;
 import com.rainwood.medicalalliance.okhttp.OnHttpListener;
@@ -44,19 +46,15 @@ import com.rainwood.medicalalliance.ui.activity.BuyRecordActivity;
 import com.rainwood.medicalalliance.ui.activity.ModifyActivity;
 import com.rainwood.medicalalliance.ui.activity.VIPTypeActivity;
 import com.rainwood.medicalalliance.ui.dialog.MenuDialog;
-import com.rainwood.medicalalliance.upload.OnUploadListener;
-import com.rainwood.medicalalliance.upload.UploadParams;
-import com.rainwood.medicalalliance.upload.UploadResponse;
-import com.rainwood.medicalalliance.upload.Uploader;
+import com.rainwood.medicalalliance.utils.CameraUtil;
 import com.rainwood.medicalalliance.utils.DialogUtils;
 import com.rainwood.scantools.android.QRCodeCaptureActivity;
-import com.rainwood.tools.common.FontDisplayUtil;
 import com.rainwood.tools.permission.OnPermission;
 import com.rainwood.tools.permission.Permission;
 import com.rainwood.tools.permission.XXPermissions;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 
-import java.io.IOException;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,6 +62,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import static android.app.Activity.RESULT_OK;
+import static com.rainwood.medicalalliance.utils.CameraUtil.PHOTO_REQUEST_CAREMA;
+import static com.rainwood.medicalalliance.utils.CameraUtil.RESULT_CAMERA_IMAGE;
+import static com.rainwood.medicalalliance.utils.CameraUtil.uri_;
 
 /**
  * @Author: a797s
@@ -72,7 +73,7 @@ import static android.app.Activity.RESULT_OK;
  * 1、是会员的情况：
  * 2、不是会员的情况：
  */
-public final class VIPCenterFragment extends BaseFragment implements View.OnClickListener, OnUploadListener, OnHttpListener {
+public final class VIPCenterFragment extends BaseFragment implements View.OnClickListener, OnHttpListener {
 
     // 不是会员的情况
     private ImageView mHeadImg;
@@ -129,15 +130,7 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
             buyRecord.setOnClickListener(this);
             Button buyVip = view.findViewById(R.id.btn_buy_vip);
             buyVip.setOnClickListener(this);
-            // 头像
-            Glide.with(Objects.requireNonNull(getActivity()))
-                    .load(R.drawable.icon_loading_fail)
-                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
-                    .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
-                    .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
-                    .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
-                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
-                    .into(mImg);
+
         } else {                        // 不是会员的UI
             StatusBarUtil.setStatusBarDarkTheme(getActivity(), true);
             mHeadImg = view.findViewById(R.id.iv_head);
@@ -186,7 +179,7 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                     startActivity(BuyRecordActivity.class);
                     break;
                 case R.id.tv_name:
-                   // toast("修改资料");
+                    // toast("修改资料");
                     startActivity(ModifyActivity.class);
                     break;
             }
@@ -224,23 +217,33 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                 case INITIAL_SIZE:
                     if (Contants.mLoginner != null) {
                         if (!Contants.hasMembers) {         // 不是会员的时候
-                            initWebView();
-                            Glide.with(Objects.requireNonNull(getActivity())).load(R.drawable.icon_loading_fail)
+                            Log.d(TAG, "头像：" + Contants.ROOT_URI + mVipData.getHeadSrc());
+                            Glide.with(getContext()).load(Contants.ROOT_URI + mVipData.getHeadSrc())
                                     .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
                                     .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
                                     .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
                                     .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
                                     .into(mHeadImg);
+                            initWebView();
                             // 昵称
                             if (TextUtils.isEmpty(mVipData.getContactName())) {
                                 mNickName.setText("暂时没有设置昵称");
                             } else {
                                 mNickName.setText(mVipData.getContactName());
                             }
-                            if ("0".equals(Contants.mLoginner.getIfKehu())){        // 不是会员
+                            if ("0".equals(Contants.mLoginner.getIfKehu())) {        // 不是会员
                                 mTips.setText("你目前还不是VIP会员");
                             }
                         } else {                             // 是会员的情况
+                            // 头像
+                            Glide.with(Objects.requireNonNull(getActivity()))
+                                    .load(Contants.ROOT_URI + mVipData.getHeadSrc())
+                                    .diskCacheStrategy(DiskCacheStrategy.RESOURCE)
+                                    .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
+                                    .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
+                                    .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()))
+                                    .into(mImg);
                             // vip特权解析
                             initWebView();
                             // 昵称
@@ -301,47 +304,9 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
     };
 
     /**
-     * 文件上传
-     */
-    private void uploadImg(String path) {
-        Uploader.Builder builder = new Uploader.Builder();
-        builder.url(Contants.ROOT_URI + "library/mData.php?type=uplopImg");
-        UploadParams params = new UploadParams();
-        //params.addHeader("token", MediaSession.Token.value());
-        params.add("file", path);
-        builder.listener(this);
-        builder.params(params);
-        builder.mediaType(Uploader.MEDIA_TYPE_FORM);
-        builder.build();
-    }
-
-    /**
-     * 文件上传监听
-     *
-     * @param response
-     * @param contentLength
-     * @param progress
-     */
-    @Override
-    public void onUploadProgress(UploadResponse response, long contentLength, long progress) {
-
-    }
-
-    @Override
-    public void onUploadFailure(UploadResponse response, IOException e) {
-
-    }
-
-    @Override
-    public void onUploadResponse(UploadResponse response) {
-
-    }
-
-    /**
      * 图片选择器
      */
     private String[] selectors = {"相机", "相册"};
-    private Uri imageUri;
 
     private void imageSelector() {
         List<String> data = new ArrayList<>(Arrays.asList(selectors));
@@ -368,10 +333,12 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                                             dialog.dismiss();
                                             switch (position) {
                                                 case 0:         // 拍照
-                                                    toast("相机");
+                                                    //toast("相机");
+                                                    CameraUtil.openCamera(VIPCenterFragment.this);
                                                     break;
                                                 case 1:         // 相册
-                                                    toast("相册");
+                                                    // toast("相册");
+                                                    gallery();
                                                     break;
                                             }
                                         }
@@ -399,12 +366,55 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                 });
     }
 
+    /**
+     * 从相册获取
+     */
+    public void gallery() {
+        // 激活系统图库，选择一张图片
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*");
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_GALLERY
+        startActivityForResult(intent, RESULT_CAMERA_IMAGE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
-            String path = "";
-            Log.d(TAG, " --- path : " + path);
+            switch (requestCode) {
+                case RESULT_CAMERA_IMAGE:                                       // 从相册返回的数据
+                    if (data != null) {
+                        // 得到图片的全路径
+                        Uri uri = data.getData();
+                        // String path = CameraUtil.getPath(getContext(), uri);
+                        // uploadImg(path);
+                        File file = IOUtils.decodeUri(getActivity(), uri);
+                        File file1 = CameraUtil.getFileFromUri(uri, getContext());
+                        RequestPost.UploadFile(file1, this);
+                    }
+                    break;
+                case PHOTO_REQUEST_CAREMA:                     //照的相片  //图片解析成Bitmap对象 -- uri转换成Bitmap对象的时候会出现图片旋转的问题
+                    Log.d(TAG, "11111");
+                    if (data != null) {          // 相机可能尚未指定intent.puExtra(MediaStore.EXTRA_OUTPUT, uri);
+                        if (data.hasExtra("data")) {     // 返回有缩略图
+                            // 得到bitmap后处理、如压缩...
+                            Bitmap bitmap = data.getParcelableExtra("data");
+                            Glide.with(getContext()).load(bitmap)
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                                    .into(mImg);
+                        } else {     // 如果返回的不是缩略图，则直接获取地址
+                            Bitmap bitmap = IOUtils.decodeUri(getContext(), uri_);
+                            Glide.with(getContext())
+                                    .load(bitmap)
+                                    .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                                    .into(mImg);
+                            File file = IOUtils.decodeUri(getActivity(), uri_);
+                            RequestPost.UploadFile(file, this);
+                        }
+                    }
+//                    uploadImg(file);
+                    break;
+            }
         }
     }
 
@@ -415,6 +425,7 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "result ---" + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -436,6 +447,17 @@ public final class VIPCenterFragment extends BaseFragment implements View.OnClic
                     mHandler.sendMessage(msg);
 //                    Log.d(TAG, " --- data -- " + body.get("data"));
                 }
+
+                if (result.url().contains("library/mData.php?type=uplopImg")) {          // 图片上传
+                    //
+                    toast("修改成功");
+                    String path = JsonParser.parseJSONObject(body.get("data")).get("src");
+                    Glide.with(getContext()).load(path)
+                            .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                            .into(mImg);
+                }
+            } else {
+                toast(body.get("warn"));
             }
         }
     }

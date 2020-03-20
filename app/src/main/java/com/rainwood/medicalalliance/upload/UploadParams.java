@@ -23,6 +23,15 @@ public class UploadParams {
      */
     private Map<String, String> headerParams;
 
+    @Override
+    public String toString() {
+        return "UploadParams{" +
+                "fileParams=" + fileParams +
+                ", stringParams=" + stringParams +
+                ", headerParams=" + headerParams +
+                '}';
+    }
+
     /**
      * 添加参数
      *

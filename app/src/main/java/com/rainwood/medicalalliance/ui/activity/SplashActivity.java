@@ -80,7 +80,6 @@ public final class SplashActivity extends BaseActivity implements Animation.Anim
     public void hasPermission(List<String> granted, boolean isAll) {
         // 1、权限获取完之后，先跳转到广告，之后跳转到登录页或者首页
         openActivity(LoginMainActivity.class);
-        // openActivity(LoginMainActivity.class);
     }
 
     @Override

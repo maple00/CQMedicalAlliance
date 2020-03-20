@@ -39,6 +39,8 @@ import java.util.Map;
  */
 public final class VipCardDetailActivity extends BaseActivity implements View.OnClickListener, OnHttpListener {
 
+    private String mCustomId;
+
     @Override
     protected int getLayoutId() {
         return R.layout.activity_vip_card_detail;
@@ -98,7 +100,7 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
             for (int j = 0; j < infosTitles.length; j++) {
                 UsuallyBean usually = new UsuallyBean();
                 usually.setTitle(infosTitles[j]);
-               // usually.setContent("哈哈");
+                // usually.setContent("哈哈");
                 infoList.add(usually);
             }
             card.setInfosList(infoList);
@@ -131,17 +133,20 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
                     }
 
                 } else {
-                   // baseInfo.setLabel("哈哈哈");
+                    // baseInfo.setLabel("哈哈哈");
                 }
                 baseList.add(baseInfo);
             }
             card.setInfo(baseList);
             mList.add(card);
         }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         mRecord = (SubRecordBean) getIntent().getSerializableExtra("record");
         if (mRecord != null) {           // 通过会员卡id和客户id查询会员卡详情
-            // Log.d(TAG, " -- record:" + mRecord.toString());
             RequestPost.VIPCardDetail(mRecord.getKhMxId(), mRecord.getId(), this);
         }
     }
@@ -169,6 +174,19 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
                 case INITIAL_SIZE:
                     CardDetailAdapter detailAdapter = new CardDetailAdapter(VipCardDetailActivity.this, mList);
                     mContentList.setAdapter(detailAdapter);
+                    detailAdapter.setOnClickLabel(position -> {
+                        // toast(mList.get(position).getLabel() + " ---- pos: " + position );
+                        switch (position) {
+                            case 1:                 // 修改基本资料
+
+                                break;
+                            case 2:                 // 修改会员卡密码
+                                Intent intent = new Intent(VipCardDetailActivity.this, ModifyCardActivity.class);
+                                intent.putExtra("customId", mCustomId);
+                                startActivity(intent);
+                                break;
+                        }
+                    });
                     break;
             }
         }
@@ -185,13 +203,14 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
         if (body != null) {
             if ("1".equals(body.get("code"))) {
                 if (result.url().contains("library/mData.php?type=cardMX")) {               // 会员卡详情
-                     Log.d(TAG, "详情：" + body.get("data"));
+                    Log.d(TAG, "详情：" + body.get("data"));
                     // 总信息
                     Map<String, String> map = JsonParser.parseJSONObject(body.get("data"));
                     // 卡信息
                     Map<String, String> cardMX = JsonParser.parseJSONObject(map.get("cardMX"));
+                    mCustomId = cardMX.get("khMxId");
                     for (int i = 0; i < ListUtils.getSize(mList.get(0).getInfosList()); i++) {
-                        switch (i){
+                        switch (i) {
                             case 0:     // 会员等级
                                 mList.get(0).getInfosList().get(i).setContent(cardMX.get("grade"));
                                 break;
@@ -223,7 +242,7 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
                     // 户口本 --- 家庭类型
                     List<ImageBean> bookLists = JsonParser.parseJSONArray(ImageBean.class, map.get("imgs"));
                     for (int i = 0; i < ListUtils.getSize(mList.get(1).getInfo()); i++) {
-                        switch (i){
+                        switch (i) {
                             case 0:             // 会员卡分类
                                 mList.get(1).getInfo().get(i).setLabel(baseInfo.get("memberType"));
                                 break;
@@ -246,8 +265,16 @@ public final class VipCardDetailActivity extends BaseActivity implements View.On
                                 mList.get(1).getInfo().get(i).getIdCardList().get(1).setPath(baseInfo.get("idcardBack"));
                                 break;
                             case 6:              // 户口本
+                                // 户口本主页
+                                ImageBean image = new ImageBean();
+                                image.setSrc(baseInfo.get("bookletInFront"));
+                                if (bookLists != null) {
+                                    bookLists.add(image);
+                                }
                                 mList.get(1).getInfo().get(i).setBookList(bookLists);
                                 break;
+                            default:
+                                throw new IllegalStateException("Unexpected value: " + i);
                         }
                     }
                     mDialog.dismissDialog();

@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Log;
 
+import androidx.fragment.app.Fragment;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -75,6 +77,34 @@ public final class CameraUtil {
         activity.startActivityForResult(intent, PHOTO_REQUEST_CAREMA);
     }
 
+    public static void openCamera(Fragment fragment) {
+        //獲取系統版本
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        // 激活相机
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // 判断存储卡是否可以用，可用进行存储
+        if (hasSdcard()) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat timeStampFormat = new SimpleDateFormat("yyyy_MM_dd_HH_mm_ss");
+            String filename = timeStampFormat.format(new Date());
+            tempFile = new File(Environment.getExternalStorageDirectory(), filename + ".jpg");
+            if (currentapiVersion < 24) {
+                // 从文件中创建uri
+                uri_ = Uri.fromFile(tempFile);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri_);
+            } else {
+                //兼容android7.0 使用共享文件的形式
+                ContentValues contentValues = new ContentValues(1);
+                contentValues.put(MediaStore.Images.Media.DATA, tempFile.getAbsolutePath());
+                uri_ = fragment.getActivity()
+                        .getApplication().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri_);
+                Log.d("sxs", "uriuri>>>" + uri_);
+            }
+        }
+        // 开启一个带有返回值的Activity，请求码为PHOTO_REQUEST_CAREMA
+        fragment.startActivityForResult(intent, PHOTO_REQUEST_CAREMA);
+    }
 
     /**
      * 打开相机录像

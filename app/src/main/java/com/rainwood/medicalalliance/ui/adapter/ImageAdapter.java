@@ -1,7 +1,7 @@
 package com.rainwood.medicalalliance.ui.adapter;
 
 import android.content.Context;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +9,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.request.RequestOptions;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.domain.ImageBean;
@@ -58,12 +56,21 @@ public final class ImageAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        Glide.with(convertView).load(Contants.ROOT_URI + getItem(position).getPath())
-               // .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
-                .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
-                .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
-                .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
-                .into(holder.iv_image);
+        if (TextUtils.isEmpty(getItem(position).getPath())) {
+            Glide.with(convertView).load(Contants.ROOT_URI + getItem(position).getSrc())
+                    // .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                    .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
+                    .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
+                    .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
+                    .into(holder.iv_image);
+        } else {
+            Glide.with(convertView).load(Contants.ROOT_URI + getItem(position).getPath())
+                    // .apply(RequestOptions.bitmapTransform(new CircleCrop()).circleCrop())
+                    .error(R.drawable.icon_loading_fail)        //异常时候显示的图片
+                    .placeholder(R.drawable.icon_loading_fail) //加载成功前显示的图片
+                    .fallback(R.drawable.icon_loading_fail)  //url为空的时候,显示的图片
+                    .into(holder.iv_image);
+        }
         return convertView;
     }
 

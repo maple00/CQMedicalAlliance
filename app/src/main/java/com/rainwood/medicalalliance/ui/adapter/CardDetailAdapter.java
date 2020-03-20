@@ -1,6 +1,7 @@
 package com.rainwood.medicalalliance.ui.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -86,7 +87,19 @@ public final class CardDetailAdapter extends BaseAdapter {
                 holder.mlv_content_list.setVisibility(View.GONE);
                 break;
         }
+        // 点击事件
+        holder.tv_label.setOnClickListener(v -> mOnClickLabel.onClickLabel(position));
         return convertView;
+    }
+
+    public interface OnClickLabel{
+        void onClickLabel(int position);
+    }
+
+    private OnClickLabel mOnClickLabel;
+
+    public void setOnClickLabel(OnClickLabel onClickLabel) {
+        mOnClickLabel = onClickLabel;
     }
 
     private class ViewHolder {

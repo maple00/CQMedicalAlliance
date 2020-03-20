@@ -28,6 +28,7 @@ android {
         sourceCompatibility 1.8
     }
 
+
     // 生成指定的apk文件名，默认为app-release.spk
     android.applicationVariants.all {
         variant ->
@@ -36,10 +37,28 @@ android {
                 outputFileName = "重庆医疗联盟.apk"
             }
     }
+
+    // APK 签名的那些事：https://www.jianshu.com/p/a1f8e5896aa2
+    signingConfigs {
+        release {
+            storeFile file('D:\\MY_DEV\\company\\CQMedicalAlliance\\app\\release\\cqma.jks')
+            storePassword '123456'
+            keyAlias 'rainwood'
+            keyPassword '123456'
+        }
+    }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // 正式环境签名
+            signingConfig signingConfigs.release
+        }
+        // 使得debug和release的签名保持一致
+        debug{
+            signingConfig signingConfigs.release
         }
     }
 }
@@ -48,62 +67,50 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: '../libs')
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-
     // 工具包
     implementation project(path: ':tools')
-
     // 扫一扫
     implementation project(path: ':scantools')
-
     //AndroidX支持
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
-
     // google material  支持
     implementation 'com.google.android.material:material:1.1.0'
-
     // Dex支持
     implementation 'com.android.support:multidex:1.0.3'
-
     // 本地异常捕捉框架：https://github.com/Ereza/CustomActivityOnCrash
     implementation 'cat.ereza:customactivityoncrash:2.2.0'
-
     // 图片加载框架：https://github.com/bumptech/glide
     implementation 'com.github.bumptech.glide:glide:4.10.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
-
     // xBanner 支持
     implementation 'jp.wasabeef:glide-transformations:3.0.1'
     implementation 'com.xhb:xbanner:1.2.2'
     implementation 'com.nineoldandroids:library:2.4.0'
-
     // okHttp 支持
-   // implementation 'com.squareup.okhttp3:okhttp:3.11.0'
-
+    //implementation 'com.squareup.okhttp3:okhttp:3.11.0'
     // Jsoup 支持 Java对HTML代码解析的支持
     implementation 'org.jsoup:jsoup:1.11.3'
-
     // 支持放大缩放的 ImageView：https://github.com/chrisbanes/PhotoView
     // implementation 'com.github.chrisbanes:PhotoView:2.3.0'
-    // 高德地图 至此
+    // 高德地图 支持
     //3D地图so及jar
     implementation 'com.amap.api:3dmap:7.2.0'
     //定位功能
     implementation 'com.amap.api:location:4.8.0'
     //搜索功能
     implementation 'com.amap.api:search:7.1.0'
-
     // alibaba (活体实体)支持
     implementation(name: 'rpsdk-3.3.0.1', ext: 'aar')
     implementation(name: 'oss-android-sdk-2.9.2', ext: 'aar')
-    implementation(name: 'SecurityGuardSDK-external-release-5.4.187-preInstall', ext: 'aar')
-    implementation(name: 'SecurityBodySDK-external-release-5.4.109-preInstall', ext: 'aar')
-    implementation files('libs/windvane-min-8.0.3.2.3.jar')
+    implementation(name: 'SecurityBodySDK-external-release-5.4.112-preInstall', ext: 'aar')
+    implementation(name: 'SecurityGuardSDK-external-release-5.4.193-preInstall', ext: 'aar')
     implementation files('libs/logging-interceptor-3.12.0.jar')
     implementation files('libs/okhttp-3.12.0.jar')
     implementation files('libs/okio-1.16.0.jar')
+    implementation files('libs/windvane-min-8.0.3.2.3.jar')
+    implementation files('libs/fastjson-1.2.62.jar')
 
     // 微信、QQ支持
     // 支付支持
     implementation 'com.github.RelinRan:AndroidPay:1.0.7'
-
 }

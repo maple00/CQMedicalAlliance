@@ -71,6 +71,7 @@ public final class UploadImgAdapter extends BaseAdapter {
                     .into(holder.iv_image);
         }else {
             holder.iv_delete.setVisibility(View.VISIBLE);
+            Log.d("sxs", " -- path --- " + getItem(position).getPath());
             Log.d("sxs", " -- path --- " + new File(getItem(position).getPath()));
             Log.d("sxs", " -- path --- " + Uri.fromFile(new File(getItem(position).getPath())));
             Glide.with(mContext).load(getItem(position).getPath())

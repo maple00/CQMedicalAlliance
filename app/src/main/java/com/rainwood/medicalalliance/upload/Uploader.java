@@ -1,6 +1,5 @@
 package com.rainwood.medicalalliance.upload;
 
-import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
@@ -152,7 +151,6 @@ public class Uploader implements OnUploadListener, Callback {
         onUploadResponse(uploadResponse);
     }
 
-    @SuppressLint("HandlerLeak")
     private Handler handler = new Handler() {
 
         @Override
@@ -307,6 +305,7 @@ public class Uploader implements OnUploadListener, Callback {
                 requestBuilder.addHeader(key, headerParams.get(key));
             }
         }
+        Log.d("sxs", "xxxxxxxxx  ====" + params.toString());
         Request request = requestBuilder.url(url).post(body).build();
         Call call = okHttpClient.newCall(request);
         call.enqueue(this);

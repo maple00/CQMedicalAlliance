@@ -18,6 +18,20 @@ public class UploadResponse implements Serializable {
     private IOException exception;
     private Response response;
 
+    @Override
+    public String toString() {
+        return "UploadResponse{" +
+                "requestParams=" + requestParams +
+                ", code=" + code +
+                ", body='" + body + '\'' +
+                ", url='" + url + '\'' +
+                ", contentLength=" + contentLength +
+                ", progress=" + progress +
+                ", call=" + call +
+                ", exception=" + exception +
+                ", response=" + response +
+                '}';
+    }
 
     public UploadParams requestParams() {
         return requestParams;

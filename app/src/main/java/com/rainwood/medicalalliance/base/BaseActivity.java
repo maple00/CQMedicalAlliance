@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.rainwood.medicalalliance.R;
 import com.rainwood.medicalalliance.common.ActivityStackManager;
 import com.rainwood.medicalalliance.common.StatusManager;
+import com.rainwood.medicalalliance.utils.DialogUtils;
 import com.rainwood.tools.statusbar.StatusBarUtil;
 import com.rainwood.tools.toast.ToastUtils;
 import com.rainwood.tools.viewinject.ViewBind;
@@ -88,24 +89,6 @@ public abstract class BaseActivity extends AppCompatActivity {
             // 如果不支持设置深灰色风格，为了兼容，则设置状态栏颜色半透明
             StatusBarUtil.setStatusBarColor(this, 0x55000000);
         }
-
-        /*
-         * 设置状态栏透明，黑色字体
-         */
-//        StatusBarUtil.setTranslucentStatus(this);
-//        StatusBarUtil.setStatusBarDarkTheme(this, true);
-
-           /*
-           白色字体
-            */
-//           StatusBarUtil.setStatusBarDarkTheme(this, false);
-
-        /*
-        设置白色字体，其他背景
-         */
-//        StatusBarUtil.setStatusBarDarkTheme(this, false);
-//        StatusBarUtil.setStatusBarColor(this, Color.parseColor("#58C087"));
-
     }
 
     /**
@@ -204,60 +187,23 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         ActivityStackManager.getInstance().removeActivity(this);
         super.onDestroy();
-    }
-
-    public ViewGroup getContentView() {
-        return findViewById(Window.ID_ANDROID_CONTENT);
-    }
-
-
-    private final StatusManager mStatusManager = new StatusManager();
-
-    /**
-     * 显示加载中
-     */
-    public void showLoading() {
-        mStatusManager.showLoading(this);
-    }
-
-    public void showLoading(@StringRes int id) {
-        mStatusManager.showLoading(this, getString(id));
-    }
-
-    public void showLoading(CharSequence text) {
-        mStatusManager.showLoading(this, text);
+        if (mDialog != null){
+            mDialog.dismissDialog();
+        }
     }
 
     /**
-     * 显示加载完成
+     * 提示 loading
      */
-    public void showComplete() {
-        mStatusManager.showComplete();
+    private DialogUtils mDialog;
+
+    public void showLoading(String tips){
+        mDialog = new DialogUtils(this, tips);
+        mDialog.showDialog();
     }
 
-    /**
-     * 显示空提示
-     */
-    public void showEmpty() {
-        mStatusManager.showEmpty(getContentView());
-    }
-
-    /**
-     * 显示错误提示
-     */
-    public void showError() {
-        mStatusManager.showError(getContentView());
-    }
-
-    /**
-     * 显示自定义提示
-     */
-    public void showLayout(@DrawableRes int drawableId, @StringRes int stringId) {
-        mStatusManager.showLayout(getContentView(), drawableId, stringId);
-    }
-
-    public void showLayout(Drawable drawable, CharSequence hint) {
-        mStatusManager.showLayout(getContentView(), drawable, hint);
+    public void dismissDialog(){
+        mDialog.dismissDialog();
     }
 
     private static int rebackFlag = -1;

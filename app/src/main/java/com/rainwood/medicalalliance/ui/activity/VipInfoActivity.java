@@ -24,6 +24,7 @@ import com.rainwood.medicalalliance.base.BaseActivity;
 import com.rainwood.medicalalliance.base.BaseDialog;
 import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.domain.ImageBean;
+import com.rainwood.medicalalliance.io.IOUtils;
 import com.rainwood.medicalalliance.json.JsonParser;
 import com.rainwood.medicalalliance.okhttp.HttpResponse;
 import com.rainwood.medicalalliance.okhttp.OnHttpListener;
@@ -42,6 +43,7 @@ import com.rainwood.tools.view.PasswordEditText;
 import com.rainwood.tools.viewinject.ViewById;
 import com.rainwood.tools.widget.MeasureGridView;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -218,38 +220,46 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                     toast("请输入姓名");
                     return;
                 }
-                /*if (TextUtils.isEmpty(cardNum.getText())) {
-                    toast("请输入身份证号");
+//                if (TextUtils.isEmpty(cardNum.getText())) {
+//                    toast("请输入身份证号");
+//                    return;
+//                }
+//                if (TextUtils.isEmpty(mobileNum.getText())) {
+//                    toast("请输入手机号");
+//                    return;
+//                }
+                if (mFrontCard == null) {
+                    toast("请上传身份证正面");
                     return;
                 }
-                if (TextUtils.isEmpty(mobileNum.getText())) {
-                    toast("请输入手机号");
+                if (mRearCard == null) {
+                    toast("请上传身份证背面");
                     return;
                 }
-                if (TextUtils.isEmpty(verifyCode.getText())) {
-                    toast("请输入验证码");
-                    return;
-                }
-                if (TextUtils.isEmpty(cardPwd.getText())) {
-                    toast("请设置会员卡密码");
-                    return;
-                }*/
-                // TODO: 新增会员卡信息
-
+//                if (TextUtils.isEmpty(verifyCode.getText())) {
+//                    toast("请输入验证码");
+//                    return;
+//                }
+//                if (TextUtils.isEmpty(cardPwd.getText())) {
+//                    toast("请设置会员卡密码");
+//                    return;
+//                }
                 // 家庭类型才有户口本
+                // TODO: 新增会员卡信息
+                // 文件上传
                 // 户口本主页
                 // 户口本子页
-                List<String> subPageSrc = new ArrayList<>();
-                if (ListUtils.getSize(mImageList) != 0) {                // 家庭会员类型
-                    for (ImageBean imageBean : mImageList.subList(1, mImageList.size())) {
-                        subPageSrc.add(imageBean.getPath());
-                    }
+                showLoading("新增中");
+                if (ListUtils.getSize(residenceList) != 0) {                // 家庭会员类型
+                    Log.d(TAG, "家庭：" + residenceList.toString());
+                    List<File> subFile = new ArrayList<>(residenceList.subList(1, residenceList.size()));
                     RequestPost.addVIPInfos((Contants.CLICK_POSITION_SIZE == 0x1005 ? "个人" : "家庭"), name.getText().toString().trim(),
                             (isWoman ? "女" : "男"), cardNum.getText().toString().trim(), mFrontCard, mRearCard, cardPwd.getText().toString().trim(),
-                            (isRead ? "是" : "否"), mobileNum.getText().toString().trim(), mImageList.get(0).getPath(),
-                            subPageSrc, this);
+                            (isRead ? "是" : "否"), mobileNum.getText().toString().trim(), residenceList.get(0),
+                            subFile, this);
                 } else {                                                                 // 个人会员类型
-                    RequestPost.getPersonalVIP((Contants.CLICK_POSITION_SIZE == 0x1005 ? "个人" : "家庭"), name.getText().toString().trim(),
+                    Log.d(TAG, "个人：" + residenceList.toString());
+                    RequestPost.getPersonalVIP((Contants.CLICK_POSITION_SIZE == 0x1006 ? "个人" : "家庭"), name.getText().toString().trim(),
                             (isWoman ? "女" : "男"), cardNum.getText().toString().trim(), mFrontCard, mRearCard, cardPwd.getText().toString().trim(),
                             (isRead ? "是" : "否"), mobileNum.getText().toString().trim(), this);
                 }
@@ -257,6 +267,7 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
         }
     }
 
+    private List<File> residenceList = new ArrayList<>();
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -272,7 +283,7 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                         image.setPath("");
                         mImageList.add(image);
                     }
-                    Log.d(TAG, " -- mImageList -- " + mImageList.toString());
+                    Log.d(TAG, "image ---" + mImageList.toString());
                     UploadImgAdapter imgAdapter = new UploadImgAdapter(VipInfoActivity.this, mImageList);
                     familyImg.setAdapter(imgAdapter);
                     familyImg.setNumColumns(3);
@@ -292,6 +303,7 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
 
     @Override
     public void onHttpSucceed(HttpResponse result) {
+        Log.d(TAG, "result ---" + result);
         Map<String, String> body = JsonParser.parseJSONObject(result.body());
         if (body != null) {
             if ("1".equals(body.get("code"))) {
@@ -300,17 +312,30 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                     Log.d(TAG, " --- 验证码 -- " + body.get("data"));
                 }
                 if (result.url().contains("library/mData.php?type=homeMessage")) {               // 家庭会员
-                    //openActivity(OpenVIPTypeActivity.class);
-                    // Log.d(TAG, "新增VIP客户" + body.get("data"));
-                    // TODO: 人脸识别
-                    RPSDK.start("68bd067ceca541dcad498957a9826b1f", this, new RPSDK.RPCompletedListener() {
+                    dismissDialog();
+                    getALiToken(body);
+                }
+                if (result.url().contains("library/mData.php?type=personalMessage")) {              // 个人会员
+                    Log.d(TAG, " -- 个人会员 ---" + body.get("data"));
+                    dismissDialog();
+                    getALiToken(body);
+                }
+
+                if (result.url().contains("library/mData.php?type=aliSDK")) {                // 活体检测
+                    Log.d(TAG, "data + " + body.get("data"));
+                    Map<String, String> data = JsonParser.parseJSONObject(body.get("data"));
+                    String verifyToken = data.get("VerifyToken");
+                    String requestId = data.get("RequestId");
+                    //
+                    RPSDK.start(verifyToken, this, new RPSDK.RPCompletedListener() {
                         @Override
                         public void onAuditResult(RPSDK.AUDIT audit, String code) {
                             //Toast.makeText(ParametersActivity.this, audit + "", Toast.LENGTH_SHORT).show();
-                            Log.d(TAG, " token --- " + audit + " ---- code -- " + code);
+                            Log.d(TAG, " audit：" + audit + " ---- code -- " + code);
                             if (audit == RPSDK.AUDIT.AUDIT_PASS) {
                                 // 认证通过。建议接入方调用实人认证服务端接口DescribeVerifyResult来获取最终的认证状态，并以此为准进行业务上的判断和处理
-                                // do something
+                                // do something -- 去支付页面
+                                openActivity(OpenVIPTypeActivity.class);
                             } else if (audit == RPSDK.AUDIT.AUDIT_FAIL) {
                                 // 认证不通过。建议接入方调用实人认证服务端接口DescribeVerifyResult来获取最终的认证状态，并以此为准进行业务上的判断和处理
                                 // do something
@@ -320,18 +345,27 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                             }
                         }
                     });
+                }
 
-                }
-                if (result.url().contains("library/mData.php?type=personalMessage")) {              // 个人会员
-                    Log.d(TAG, " -- 个人会员 ---" + body.get("data"));
-                    openActivity(OpenVIPTypeActivity.class);
-                }
             }
         } else {
             toast(body.get("warn"));
         }
     }
 
+    /**
+     * request residence token
+     * @param body
+     */
+    private void getALiToken(Map<String, String> body) {
+        toast("新增成功");
+        Map<String, String> map = JsonParser.parseJSONObject(body.get("data"));
+        Log.d(TAG, " map --- " + map);
+        String customID = map.get("khMxId");
+        String url = map.get("url");
+        // 请求活体检测token
+        RequestPost.getVerifyToken(url, this);
+    }
 
     /**
      * 从相机、相册中选择图片
@@ -348,10 +382,8 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
         startActivityForResult(intent, RESULT_CAMERA_IMAGE);
     }
 
-    private Uri uri;
-    private Bitmap mBitmap;
-    private String mFrontCard;
-    private String mRearCard;
+    private File mFrontCard;
+    private File mRearCard;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -363,46 +395,31 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                 case RESULT_CAMERA_IMAGE:                                       // 从相册返回的数据
                     if (data != null) {
                         // 得到图片的全路径
-                        uri = data.getData();
-                        Log.d(TAG, " uri --  " + uri);
+                        Uri uri = data.getData();
                         if (Contants.CLICK_POSITION_SIZE == 0x1007) {           // 0x1007:正面
                             cardFont.setImageURI(uri);
-                            mFrontCard = CameraUtil.getPath(this, uri);
+                            mFrontCard = IOUtils.decodeUri(this, uri);
                         } else if (Contants.CLICK_POSITION_SIZE == 0x1008) {        // 0x1008: 反面
                             cardBehind.setImageURI(uri);
-                            mRearCard = CameraUtil.getPath(this, uri);
+                            mRearCard = IOUtils.decodeUri(this, uri);
                         } else {     // 户口本照片
-                            String path = CameraUtil.getPath(this, uri);
-                            ImageBean image = new ImageBean();
-                            image.setPath(path);
-                            mImageList.add(image);
-                            // 刷新UI
-                            Message msg = new Message();
-                            msg.what = FAMILY_SIZE;
-                            mHandler.sendMessage(msg);
+                            residenceImg(uri);
                         }
                     }
                     break;
                 case PHOTO_REQUEST_CAREMA:                                                  //照的相片
                     try {
                         //图片解析成Bitmap对象 -- uri转换成Bitmap对象的时候会出现图片旋转的问题
-                        mBitmap = BitmapFactory.decodeStream(
+                        Bitmap bitmap = BitmapFactory.decodeStream(
                                 getContentResolver().openInputStream(uri_));
                         if (Contants.CLICK_POSITION_SIZE == 0x1007) {
                             cardFont.setImageURI(uri_);
-                            mFrontCard = CameraUtil.getPath(this, uri_);
+                            mFrontCard = IOUtils.decodeUri(this, uri_);
                         } else if (Contants.CLICK_POSITION_SIZE == 0x1008) {
                             cardBehind.setImageURI(uri_);
-                            mRearCard = CameraUtil.getPath(this, uri_);
+                            mRearCard = IOUtils.decodeUri(this, uri_);
                         } else {     // 户口本照片
-                            String path = CameraUtil.getPath(this, uri_);
-                            ImageBean image = new ImageBean();
-                            image.setPath(path);
-                            mImageList.add(image);
-                            // 刷新UI
-                            Message msg = new Message();
-                            msg.what = FAMILY_SIZE;
-                            mHandler.sendMessage(msg);
+                            residenceImg(uri_);
                         }
                         Log.d(TAG, " uri --  " + uri_);
                     } catch (FileNotFoundException e) {
@@ -411,6 +428,24 @@ public final class VipInfoActivity extends BaseActivity implements View.OnClickL
                     break;
             }
         }
+    }
+
+    /**
+     * 户口本照片
+     * @param uri_ 照片uri
+     */
+    private void residenceImg(Uri uri_) {
+        String path = CameraUtil.getPath(this, uri_);
+        File file = IOUtils.decodeUri(this, uri_);
+        residenceList.add(file);
+        ImageBean image = new ImageBean();
+        image.setPath(path);
+        image.setHasAdd(false);
+        mImageList.add(image);
+        // 刷新UI
+        Message msg = new Message();
+        msg.what = FAMILY_SIZE;
+        mHandler.sendMessage(msg);
     }
 
     private String[] selectors = {"相机", "相册"};

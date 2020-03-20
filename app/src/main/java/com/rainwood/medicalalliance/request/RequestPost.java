@@ -1,5 +1,7 @@
 package com.rainwood.medicalalliance.request;
 
+import android.util.Log;
+
 import com.rainwood.medicalalliance.common.Contants;
 import com.rainwood.medicalalliance.okhttp.OkHttp;
 import com.rainwood.medicalalliance.okhttp.OnHttpListener;
@@ -67,6 +69,17 @@ public final class RequestPost {
         RequestParams params = new RequestParams();
         params.add("tel", tel);
         OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=getCaptcha", params, listener);
+    }
+
+    /**
+     * 修改密码
+     */
+    public static void modifyPwd(String khMxId, String pas, String prove, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("khMxId", khMxId);
+        params.add("pas", pas);
+        params.add("prove", prove);
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=changePas", params, listener);
     }
 
     /**
@@ -199,9 +212,9 @@ public final class RequestPost {
     /**
      * 新增会员信息 --- 家庭
      */
-    public static void addVIPInfos(String type, String name, String sex, String idCard, String idCardFront,
-                                   String idCardBack, String pwd, String isRead, String tel,
-                                   String residence, List<String> subResideceLists, OnHttpListener listener) {
+    public static void addVIPInfos(String type, String name, String sex, String idCard, File idCardFront,
+                                   File idCardBack, String pwd, String isRead, String tel,
+                                   File residence, List<File> subResideceLists, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("type", type);                       // 购买的VIP的类型
         params.add("name", name);                       // 姓名
@@ -213,8 +226,8 @@ public final class RequestPost {
         params.add("read", isRead);                     // 是否阅读了免责条款
         params.add("tel", tel);                         // 电话号码
         params.add("bookletInFront", residence);        // 户口本主页
-        for (String resideceList : subResideceLists) {
-            params.add("bookletZi[]", resideceList);           // 户口本子页
+        for (int i = 0; i < subResideceLists.size(); i++) {
+            params.add("bookletZi[" + i + "]", subResideceLists.get(i));
         }
         OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=homeMessage", params, listener);
     }
@@ -222,8 +235,8 @@ public final class RequestPost {
     /**
      * 新增会员信息 --- 个人
      */
-    public static void getPersonalVIP(String type, String name, String sex, String idCard, String idCardFront, String idCardBack,
-                                      String pwd, String isRead, String tel, OnHttpListener listener ){
+    public static void getPersonalVIP(String type, String name, String sex, String idCard, File idCardFront, File idCardBack,
+                                      String pwd, String isRead, String tel, OnHttpListener listener) {
         RequestParams params = new RequestParams();
         params.add("type", type);                       // 购买的VIP的类型
         params.add("name", name);                       // 姓名
@@ -244,8 +257,21 @@ public final class RequestPost {
     /**
      * 活体人脸请求verifyToken
      */
-    public static void getVerifyToken(OnHttpListener listener) {
+    public static void getVerifyToken(String url, OnHttpListener listener) {
         RequestParams params = new RequestParams();
-        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=getDongtaiByName", params, listener);
+        params.add("url", url);
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=aliSDK", params, listener);
     }
+
+
+    /**
+     * 文件上传
+     */
+    public static void UploadFile(File file, OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        params.add("fileName", file);
+        //Log.d("sxs", "文件上传';");
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=uplopImg", params, listener);
+    }
+
 }
