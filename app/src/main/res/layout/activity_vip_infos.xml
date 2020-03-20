@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     android:orientation="vertical">
 
@@ -120,6 +120,38 @@
 
             <View style="@style/HorizontalLineStyle" />
 
+            <LinearLayout
+                android:id="@+id/ll_family"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
+
+                <View style="@style/HorizontalLineStyle" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="请上传您的户口本照片"
+                    android:textColor="@color/gray10"
+                    android:textSize="13sp" />
+
+                <com.rainwood.tools.widget.MeasureGridView
+                    android:id="@+id/mgv_family_vip"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:verticalSpacing="15dp" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="20dp"
+                android:background="#FFF3F3F3" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -203,38 +235,6 @@
 
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/ll_family"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="vertical">
-
-                <View style="@style/HorizontalLineStyle" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="请上传您的户口本照片"
-                    android:textColor="@color/gray10"
-                    android:textSize="13sp" />
-
-                <com.rainwood.tools.widget.MeasureGridView
-                    android:id="@+id/mgv_family_vip"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:verticalSpacing="15dp" />
-
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="5dp"
-                android:layout_marginTop="20dp"
-                android:background="#FFF3F3F3" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -256,7 +256,7 @@
                     android:layout_weight="1"
                     android:hint="请输入手机号"
                     android:inputType="phone"
-                    app:regexType="mobile"/>
+                    app:regexType="mobile" />
 
                 <Button
                     android:id="@+id/btn_send_code"
