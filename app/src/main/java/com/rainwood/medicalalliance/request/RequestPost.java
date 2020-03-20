@@ -263,6 +263,13 @@ public final class RequestPost {
         OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=aliSDK", params, listener);
     }
 
+    /**
+     * 支付宝
+     */
+    public static void aliPay(OnHttpListener listener) {
+        RequestParams params = new RequestParams();
+        OkHttp.post(Contants.ROOT_URI + "library/mData.php?type=alipaySDK", params, listener);
+    }
 
     /**
      * 文件上传

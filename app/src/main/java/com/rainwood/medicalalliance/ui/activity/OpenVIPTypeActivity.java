@@ -188,7 +188,8 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
                     }
                     if ("1".equals(payMethod.getMethod())) {             // 支付宝支付
                         // 需要先向服务端获取orderInfo
-                        aliPay();
+                        RequestPost.aliPay(this);
+
                     }
                 });
 
@@ -201,10 +202,10 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
     /**
      * 支付宝支付
      */
-    private void aliPay() {
+    private void aliPay(String appId) {
         AliPay.Builder builder = new AliPay.Builder(this);
         // app支付请求参数字符串，主要包含商户的订单信息，key=value形式，以&连接。
-        builder.orderInfo("app_id=2021001144648331&biz_content=%7B%22timeout_express%22%3A%2290m%22%2C%22total_amount%22%3A%229.00%22%2C%22product_code%22%3A%22QUICK_MSECURITY_PAY%22%2C%22body%22%3A%22Iphone6+16G%22%2C%22subject%22%3A%22%E5%A4%A7%E4%B9%90%E9%80%8F%22%2C%22out_trade_no%22%3A%2270501111111S001111119%22%2C%22time_expire%22%3A%222016-12-31+10%3A05%22%2C%22goods_type%22%3A%220%22%2C%22promo_params%22%3A%22%7B%5C%22storeIdType%5C%22%3A%5C%221%5C%22%7D%22%2C%22passback_params%22%3A%22merchantBizType%253d3C%2526merchantBizNo%253d2016010101111%22%2C%22extend_params%22%3A%7B%22sys_service_provider_id%22%3A%222088511833207846%22%2C%22hb_fq_num%22%3A%223%22%2C%22hb_fq_seller_percent%22%3A%22100%22%2C%22industry_reflux_info%22%3A%22%7B%5C%5C%5C%22scene_code%5C%5C%5C%22%3A%5C%5C%5C%22metro_tradeorder%5C%5C%5C%22%2C%5C%5C%5C%22channel%5C%5C%5C%22%3A%5C%5C%5C%22xxxx%5C%5C%5C%22%2C%5C%5C%5C%22scene_data%5C%5C%5C%22%3A%7B%5C%5C%5C%22asset_name%5C%5C%5C%22%3A%5C%5C%5C%22ALIPAY%5C%5C%5C%22%7D%7D%22%2C%22card_type%22%3A%22S0JP0000%22++++%7D%2C%22merchant_order_no%22%3A%2220161008001%22%2C%22enable_pay_channels%22%3A%22pcredit%2CmoneyFund%2CdebitCardExpress%22%2C%22store_id%22%3A%22NJ_001%22%2C%22specified_channel%22%3A%22pcredit%22%2C%22disable_pay_channels%22%3A%22pcredit%2CmoneyFund%2CdebitCardExpress%22%2C++++++%22goods_detail%22%3A%5B%7B++++++++%22goods_id%22%3A%22apple-01%22%2C%22alipay_goods_id%22%3A%2220010001%22%2C%22goods_name%22%3A%22ipad%22%2C%22quantity%22%3A1%2C%22price%22%3A2000%2C%22goods_category%22%3A%2234543238%22%2C%22categories_tree%22%3A%22124868003%7C126232002%7C126252004%22%2C%22body%22%3A%22%E7%89%B9%E4%BB%B7%E6%89%8B%E6%9C%BA%22%2C%22show_url%22%3A%22http%3A%2F%2Fwww.alipay.com%2Fxxx.jpg%22++++++++%7D%5D%2C%22ext_user_info%22%3A%7B%22name%22%3A%22%E6%9D%8E%E6%98%8E%22%2C%22mobile%22%3A%2216587658765%22%2C%22cert_type%22%3A%22IDENTITY_CARD%22%2C%22cert_no%22%3A%22362334768769238881%22%2C%22min_age%22%3A%2218%22%2C%22fix_buyer%22%3A%22F%22%2C%22need_check_info%22%3A%22F%22++++%7D%2C%22business_params%22%3A%22%7B%5C%22data%5C%22%3A%5C%22123%5C%22%7D%22%2C%22agreement_sign_params%22%3A%7B%22personal_product_code%22%3A%22CYCLE_PAY_AUTH_P%22%2C%22sign_scene%22%3A%22INDUSTRY%7CDIGITAL_MEDIA%22%2C%22external_agreement_no%22%3A%22test20190701%22%2C%22external_logon_id%22%3A%2213852852877%22%2C%22access_params%22%3A%7B%22channel%22%3A%22ALIPAYAPP%22++++++%7D%2C%22sub_merchant%22%3A%7B%22sub_merchant_id%22%3A%222088123412341234%22%2C%22sub_merchant_name%22%3A%22%E6%BB%B4%E6%BB%B4%E5%87%BA%E8%A1%8C%22%2C%22sub_merchant_service_name%22%3A%22%E6%BB%B4%E6%BB%B4%E5%87%BA%E8%A1%8C%E5%85%8D%E5%AF%86%E6%94%AF%E4%BB%98%22%2C%22sub_merchant_service_description%22%3A%22%E5%85%8D%E5%AF%86%E4%BB%98%E8%BD%A6%E8%B4%B9%EF%BC%8C%E5%8D%95%E6%AC%A1%E6%9C%80%E9%AB%98500%22++++++%7D%2C%22period_rule_params%22%3A%7B%22period_type%22%3A%22DAY%22%2C%22period%22%3A3%2C%22execute_time%22%3A%222019-01-23%22%2C%22single_amount%22%3A10.99%2C%22total_amount%22%3A600%2C%22total_payments%22%3A12++++++%7D++++%7D++%7D&charset=utf-8&format=json&method=alipay.trade.app.pay&sign_type=RSA2×tamp=2020-03-19+13%3A35%3A18&version=1.0&sign=h57Olj5Hafl1KCxIAZaEHAL27cpbscDrPF5Nfaqx0Wxh5f%2B61HbxH8R4GFjM2CPGDvUKmmr0%2Ba%2FF%2F9CoqxKrzsev9C%2FRaehhJa5Y3pN1aKjR4PrF%2Fe%2FMgX8kT4dApOAhh5iatirfhWw8Pl5LH5oS%2Fqdx60dCyoZ8VdWAiFFQd3yb6XQXkP%2B8IaDXHkZOOjXp%2BccdDnUjC%2FcLpxVqEDMbA4dzysF1GZgz1AHRtUuWy9j%2BTzwnsDGVHWcFn9zwGp25brzFN7xWJiK1h4kMfl%2FyWwXgwkKnwT4E9KTYRCIq4zKGmmfGZpVUsER7AQYZ0ZegpmlerKu16gLlddmCvq0bDQ%3D%3D");
+        builder.orderInfo(appId);
         builder.listener(new OnAliPayListener() {
             /**
              * 参数解释
@@ -328,6 +329,11 @@ public final class OpenVIPTypeActivity extends BaseActivity implements View.OnCl
                     Message msg = new Message();
                     msg.what = INITIAL_SIZE;
                     mHandler.sendMessage(msg);
+                }
+                if (result.url().contains("library/mData.php?type=alipaySDK")){             // 获取阿里支付的orderInfo
+                    Log.d(TAG, "body --------" + body.get("data"));
+
+                    aliPay(body.get("data"));
                 }
             } else {
                 toast(body.get("warn"));

@@ -52,9 +52,12 @@ public final class VIPTypeActivity extends BaseActivity implements View.OnClickL
                 break;
             case R.id.iv_personal_vip:
             case R.id.tv_personal_vip:
-                toast("选择个人会员");
+                /*toast("选择个人会员");
                 Contants.CLICK_POSITION_SIZE = 0x1005;
                 openActivity(VipInfoActivity.class);
+                */
+                // test
+                openActivity(OpenVIPTypeActivity.class);
                 break;
             case R.id.iv_family_vip:
             case R.id.tv_family:
